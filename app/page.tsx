@@ -4,8 +4,8 @@ export default function HomePage() {
     <div className="p-4 max-w-md mx-auto bg-gray-50 min-h-screen">
       {/* الترحيب */}
       <div className="bg-gradient-to-l from-blue-600 to-blue-800 text-white p-6 rounded-2xl shadow-lg mt-4">
-        <h1 className="text-2xl font-bold">مرحباً بك في <span className="text-yellow-300">تيبان</span> 👋</h1>
-        <p className="text-blue-100 mt-1">وجهتك الصحية الأولى بذكاء اصطناعي</p>
+        <h1 className="text-2xl font-bold">مرحباً بك في <span className="text-yellow-300">تبيبان</span> 👋</h1>
+        <p className="text-blue-100 mt-1">وجهتك الصحية الأولى بذكاء </p>
       </div>
 
       {/* نصيحة يومية */}
