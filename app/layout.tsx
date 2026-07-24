@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "تيبان - النظام الصحي الذكي",
+  title: "تيبيان - النظام الصحي الذكي",
   description: "نظامك الصحي الذكي المتكامل",
 };
 
