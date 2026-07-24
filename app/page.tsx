@@ -5,7 +5,7 @@ export default function HomePage() {
       {/* الترحيب */}
       <div className="bg-gradient-to-l from-blue-600 to-blue-800 text-white p-6 rounded-2xl shadow-lg mt-4">
         <h1 className="text-2xl font-bold">مرحباً بك في <span className="text-yellow-300">تبيبان</span> 👋</h1>
-        <p className="text-blue-100 mt-1"> علام الرعوي وجهتك الاولة الصحية الأولى بذكاء الاصطناعي </p>
+        <p className="text-blue-100 mt-1"> علام الرعوي وجهتك الاولة الصحية الأولى بذكاء عزام </p>
       </div>
 
       {/* نصيحة يومية */}
