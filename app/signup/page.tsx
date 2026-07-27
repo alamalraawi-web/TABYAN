@@ -122,8 +122,18 @@ export default function SignupPage() {
         }
       }
 
-      // 5. إعادة التوجيه إلى لوحة التحكم المناسبة
-      router.push("/dashboard");
+      // 5. إعادة التوجيه إلى لوحة التحكم المناسبة بناءً على الدور
+      try {
+        const route =
+          formData.role === "doctor"
+            ? "/main/consultations"
+            : formData.role === "pharmacist"
+            ? "/main/pharmacy"
+            : "/main/dashboard";
+        router.push(route);
+      } catch (e) {
+        router.push("/main/dashboard");
+      }
     } catch (error: any) {
       setError(error.message || "حدث خطأ أثناء إنشاء الحساب");
     } finally {

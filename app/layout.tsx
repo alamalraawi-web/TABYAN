@@ -1,20 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { TibyanShell } from "../components/tibyan-shell";
 
 export const metadata: Metadata = {
-  title: "تيبيان - النظام الصحي الذكي",
-  description: "نظامك الصحي الذكي المتكامل",
+  title: {
+    default: "تبيان | منصة صحية ذكية",
+    template: "%s | تبيان",
+  },
+  description: "منصة صحية تجمع الطب والهندسة والذكاء الاصطناعي في تجربة عربية حديثة.",
 };
 
 export default function RootLayout({
@@ -23,12 +16,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="ar"
-      dir="rtl"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="ar" dir="rtl">
+      <body>
+        <TibyanShell>{children}</TibyanShell>
+      </body>
     </html>
   );
 }
