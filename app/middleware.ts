@@ -1,46 +1,34 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  
-  // إنشاء عميل Supabase مباشرة من المفاتيح البيئية
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-      },
-    }
-  );
+export function middleware(request: NextRequest) {
+  // 1. نطبع رسالة تأكيد في الطرفية (للتأكد من أن الملف يُقرأ)
+  console.log("✅ Middleware يعمل الآن على:", request.nextUrl.pathname);
 
-  // الحصول على الجلسة من الكوكيز
-  const { data: { session }, error } = await supabase.auth.getSession();
-
-  // الصفحات العامة (لا تحتاج تسجيل دخول)
+  // 2. نحدد الصفحات العامة (الوحيدة التي لا تحتاج تسجيل دخول)
   const publicPaths = ['/login', '/signup'];
-  const isPublicPath = publicPaths.includes(req.nextUrl.pathname);
+  const isPublicPath = publicPaths.includes(request.nextUrl.pathname);
 
-  // إذا لم يكن هناك جلسة والمستخدم في صفحة محمية
+  // 3. نتحقق من وجود جلسة (من الكوكيز)
+  const session = request.cookies.get('sb-access-token')?.value;
+
+  // 4. إذا لم توجد جلسة والمستخدم يحاول دخول صفحة محمية
   if (!session && !isPublicPath) {
-    const redirectUrl = new URL('/login', req.url);
-    return NextResponse.redirect(redirectUrl);
+    console.log("🚫 غير مسجل، توجيه إلى /login");
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // إذا كان هناك جلسة والمستخدم في صفحة الدخول
+  // 5. إذا كانت الجلسة موجودة والمستخدم في صفحة الدخول
   if (session && isPublicPath) {
-    const redirectUrl = new URL('/dashboard', req.url);
-    return NextResponse.redirect(redirectUrl);
+    console.log("✅ مسجل، توجيه إلى /dashboard");
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  return res;
+  // 6. السماح بالوصول
+  return NextResponse.next();
 }
 
-// تحديد الصفحات التي يطبق عليها الميدلوير
+// 7. تطبيق الميدلوير على جميع الصفحات (ما عدا api والملفات الثابتة)
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
