@@ -312,7 +312,7 @@ export default function LoginPage() {
         return;
       }
       if (session) {
-        router.replace("/dashboard");
+        router.replace("/");
         router.refresh();
         return;
       }
@@ -355,7 +355,7 @@ export default function LoginPage() {
         if (rememberEmail) localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
         else localStorage.removeItem(REMEMBERED_EMAIL_KEY);
       } catch {}
-      router.replace("/dashboard");
+      router.replace("/");
       router.refresh();
     } catch (error: unknown) {
       setNotice({ type: "error", text: getArabicAuthError(error) });

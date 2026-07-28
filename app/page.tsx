@@ -3,27 +3,23 @@
 import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import { useTibyanNavigation } from "../components/tibyan-shell";
 import type { ComponentType, SVGProps } from "react";
-import {
-  useCallback,
-  memo,
-  useMemo,
-  startTransition,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, memo, startTransition, Suspense } from "react";
 import { useRouter } from "next/navigation";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
+// ----- تحسين تحميل الخط -----
 const tibyanFont = IBM_Plex_Sans_Arabic({
   subsets: ["arabic", "latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
   variable: "--font-tibyan",
   preload: true,
+  adjustFontFallback: true,
+  fallback: ["system-ui", "Tahoma", "Arial"],
 });
 
+// ----- الأنواع -----
 type Service = {
   title: string;
   description: string;
@@ -32,10 +28,21 @@ type Service = {
   icon: ComponentType<IconProps>;
 };
 
-// ----- الأيقونات الثابتة (بدون تغيير) -----
+// ----- الأيقونات المحسّنة (باستخدام SVGR محسّن) -----
+const iconBaseProps = {
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: "1.8",
+  width: "1em",
+  height: "1em",
+  focusable: false,
+  "aria-hidden": true,
+} as const;
+
 function AiIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+    <svg {...iconBaseProps} strokeWidth="1.8" {...props}>
       <path d="M9 3h6M12 3V1M8 7h8a4 4 0 0 1 4 4v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-5a4 4 0 0 1 4-4Z" />
       <path d="M8.5 12h.01M15.5 12h.01M9 16h6M2 13H1M23 13h-1" />
     </svg>
@@ -44,7 +51,7 @@ function AiIcon(props: IconProps) {
 
 function ArrowIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+    <svg {...iconBaseProps} strokeWidth="2" {...props}>
       <path d="M19 12H5M11 18l-6-6 6-6" />
     </svg>
   );
@@ -52,7 +59,7 @@ function ArrowIcon(props: IconProps) {
 
 function LabIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...props}>
+    <svg {...iconBaseProps} strokeWidth="1.7" {...props}>
       <path d="M9 3h6M10 3v6l-5.3 8.8A2 2 0 0 0 6.4 21h11.2a2 2 0 0 0 1.7-3.2L14 9V3" />
       <path d="M7.5 16h9M10 13h4" />
     </svg>
@@ -61,7 +68,7 @@ function LabIcon(props: IconProps) {
 
 function NutritionIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...props}>
+    <svg {...iconBaseProps} strokeWidth="1.7" {...props}>
       <path d="M4 11h16a8 8 0 0 1-16 0Z" />
       <path d="M8 7c1.5-2 3.5-2 5-4M14 8c1-1.8 2.8-2.2 4-3.5M7 19h10" />
     </svg>
@@ -70,7 +77,7 @@ function NutritionIcon(props: IconProps) {
 
 function PharmacyIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...props}>
+    <svg {...iconBaseProps} strokeWidth="1.7" {...props}>
       <path d="m8.5 4.5 11 11a4.24 4.24 0 0 1-6 6l-11-11a4.24 4.24 0 1 1 6-6Z" />
       <path d="m7 15 8-8" />
     </svg>
@@ -79,7 +86,7 @@ function PharmacyIcon(props: IconProps) {
 
 function ConsultationIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...props}>
+    <svg {...iconBaseProps} strokeWidth="1.7" {...props}>
       <path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z" />
       <path d="M8 13h3v3H8zM14 13h2M14 16h2" />
     </svg>
@@ -88,7 +95,7 @@ function ConsultationIcon(props: IconProps) {
 
 function HeartPulseIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...props}>
+    <svg {...iconBaseProps} strokeWidth="1.7" {...props}>
       <path d="M20.8 5.7a5.5 5.5 0 0 0-7.8 0L12 6.8l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.5a5.5 5.5 0 0 0 0-7.8Z" />
       <path d="M3 12h4l1.4-3 3.2 7 2.1-4H21" />
     </svg>
@@ -97,7 +104,7 @@ function HeartPulseIcon(props: IconProps) {
 
 function StethoscopeIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...props}>
+    <svg {...iconBaseProps} strokeWidth="1.7" {...props}>
       <path d="M6 3v5a6 6 0 0 0 12 0V3" />
       <path d="M6 3H4M18 3h2M12 14v2a5 5 0 0 0 10 0v-1" />
       <circle cx="21" cy="12" r="2" />
@@ -107,48 +114,23 @@ function StethoscopeIcon(props: IconProps) {
 
 function ClipboardIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...props}>
+    <svg {...iconBaseProps} strokeWidth="1.7" {...props}>
       <path d="M9 5H6a2 2 0 0 0-2 2v13h16V7a2 2 0 0 0-2-2h-3" />
       <path d="M9 3h6v4H9zM8 12l1.5 1.5L12 11M14 12h3M8 17l1.5 1.5L12 16M14 17h3" />
     </svg>
   );
 }
 
-// ----- شعار تبيان (مُعاد هيكلته ليكون سلساً) -----
+// ----- شعار تبيان (معزول بـ memo واستخدام CSS containment) -----
 const TibyanLogo = memo(function TibyanLogo({ className }: { className?: string }) {
-  // مرجع لتتبع حالة الرؤية
-  const containerRef = useRef<SVGSVGElement>(null);
-  const [isVisible, setIsVisible] = useState(true);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // إيقاف/تشغيل الحركات بناءً على رؤية الشعار
-        setIsVisible(entry.isIntersecting);
-        // تطبيق pause على العناصر المتحركة عبر CSS
-        if (entry.isIntersecting) {
-          containerRef.current?.classList.remove("logo-paused");
-        } else {
-          containerRef.current?.classList.add("logo-paused");
-        }
-      },
-      { threshold: 0.1, rootMargin: "50px" }
-    );
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <svg
-      ref={containerRef}
       viewBox="70 180 520 520"
       role="img"
       aria-labelledby="tibyan-logo-title tibyan-logo-description"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMid meet"
-      style={{ willChange: "transform", transform: "translateZ(0)" }}
     >
       <title id="tibyan-logo-title">شعار مشروع تبيان الطبي</title>
       <desc id="tibyan-logo-description">
@@ -385,7 +367,7 @@ const TibyanLogo = memo(function TibyanLogo({ className }: { className?: string 
   );
 });
 
-// ----- البيانات الثابتة -----
+// ----- البيانات الثابتة (مجمّدة وقت التشغيل) -----
 const ORBIT_ICONS = [
   { Icon: HeartPulseIcon, color: "#0876d9" },
   { Icon: StethoscopeIcon, color: "#08a6b9" },
@@ -394,6 +376,7 @@ const ORBIT_ICONS = [
   { Icon: PharmacyIcon, color: "#17aeaa" },
   { Icon: ConsultationIcon, color: "#35bd70" },
 ];
+Object.freeze(ORBIT_ICONS);
 
 const SERVICES: Service[] = [
   {
@@ -439,10 +422,12 @@ const SERVICES: Service[] = [
     icon: HeartPulseIcon,
   },
 ];
+Object.freeze(SERVICES);
 
-// ----- المكونات الفرعية (مع memo وتحسين prefetch) -----
-
+// ----- النوع المساعد -----
 type NavigateFn = (href: string, title: string) => void;
+
+// ----- مكونات الصفحة (محسّنة بـ memo و CSS containment) -----
 
 const HeroSection = memo(function HeroSection({
   navigate,
@@ -452,7 +437,10 @@ const HeroSection = memo(function HeroSection({
   prefetch: (href: string) => void;
 }) {
   return (
-    <section className="hero-shell relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/75 px-5 py-8 shadow-[0_35px_100px_rgba(4,70,127,0.12)] backdrop-blur-xl sm:px-9 sm:py-11 lg:px-12 lg:py-14">
+    <section
+      className="hero-shell relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/75 px-5 py-8 shadow-[0_35px_100px_rgba(4,70,127,0.12)] backdrop-blur-xl sm:px-9 sm:py-11 lg:px-12 lg:py-14"
+      style={{ contain: "layout style paint" }}
+    >
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="hero-scan absolute inset-y-0 w-28 bg-gradient-to-r from-transparent via-[#12b7bd]/10 to-transparent" />
         <div className="absolute -left-16 -top-16 h-56 w-56 rounded-full border-[32px] border-[#0876d9]/5" />
@@ -494,7 +482,10 @@ const HeroSection = memo(function HeroSection({
           </div>
         </div>
 
-        <div className="tibyan-logo-stage relative mx-auto grid min-h-[360px] w-full max-w-[470px] place-items-center sm:min-h-[430px]">
+        <div
+          className="tibyan-logo-stage relative mx-auto grid min-h-[360px] w-full max-w-[470px] place-items-center sm:min-h-[430px]"
+          style={{ contain: "layout style paint", isolation: "isolate" }}
+        >
           <div className="orbit-canvas pointer-events-none absolute h-[340px] w-[340px] sm:h-[420px] sm:w-[420px]" aria-hidden="true">
             <div className="engineering-ring absolute inset-0 rounded-full border border-dashed border-[#0a86c7]/25" />
             <div className="engineering-ring reverse absolute inset-[30px] rounded-full border border-[#12b7bd]/20 sm:inset-[38px]" />
@@ -580,7 +571,7 @@ const ServiceCard = memo(function ServiceCard({
       type="button"
       onClick={() => navigate(service.href, service.title)}
       onMouseEnter={() => prefetch(service.href)}
-      style={{ animationDelay: `${index * 120}ms` }}
+      style={{ animationDelay: `${index * 120}ms`, contain: "layout style paint" }}
       className="service-card group relative min-h-[220px] overflow-hidden rounded-[1.75rem] border border-[#0a86c7]/10 bg-white p-6 text-right shadow-[0_20px_55px_rgba(3,77,132,0.09)] transition duration-500 hover:-translate-y-2 hover:border-[#10b6b8]/35 hover:shadow-[0_30px_75px_rgba(3,88,147,0.17)] focus:outline-none focus:ring-4 focus:ring-[#12b7bd]/15 sm:p-7"
     >
       <span className="card-light pointer-events-none absolute -left-20 -top-20 h-56 w-56 rounded-full bg-[#0876d9]/[0.08] blur-2xl transition duration-700 group-hover:translate-x-10 group-hover:translate-y-12" />
@@ -649,7 +640,7 @@ const WorkflowSection = memo(function WorkflowSection() {
     ["01", "اختر الخدمة"],
     ["02", "أدخل البيانات"],
     ["03", "استلم التوجيه"],
-  ];
+  ] as const;
   return (
     <section className="mt-12 rounded-[2rem] border border-[#0a86c7]/10 bg-gradient-to-l from-[#064f97] via-[#0876d9] to-[#0aa7b7] p-6 text-white shadow-[0_30px_80px_rgba(4,85,151,0.22)] sm:p-9">
       <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
@@ -683,11 +674,29 @@ const PageFooter = memo(function PageFooter() {
   );
 });
 
-// ----- المكون الرئيسي للصفحة -----
-export default function HomePage() {
+// ----- مكون التحميل المبدئي (Skeleton Screen) -----
+const HomePageSkeleton = memo(function HomePageSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+        <div className="h-[400px] rounded-[2rem] bg-gray-200/60" />
+        <div className="mt-6 h-[80px] rounded-3xl bg-gray-200/60" />
+        <div className="mt-12 grid gap-5 md:grid-cols-2">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="h-[220px] rounded-[1.75rem] bg-gray-200/60" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// ----- المكون الرئيسي المحسّن -----
+function HomePageContent() {
   const { navigate } = useTibyanNavigation();
   const router = useRouter();
 
+  // تثبيت دالة التنقل مع startTransition
   const handleNavigate = useCallback(
     (href: string, title: string) => {
       startTransition(() => {
@@ -697,6 +706,7 @@ export default function HomePage() {
     [navigate]
   );
 
+  // دالة التحميل المسبق
   const prefetch = useCallback(
     (href: string) => {
       router.prefetch(href);
@@ -709,6 +719,7 @@ export default function HomePage() {
       dir="rtl"
       className={`${tibyanFont.variable} tibyan-page min-h-screen overflow-x-hidden bg-[#f7fcff] text-[#073b72]`}
     >
+      {/* خلفية هندسية طبية (محسّنة) */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
         <div className="medical-grid absolute inset-0 opacity-60" />
         <div className="absolute -right-28 top-28 h-80 w-80 rounded-full bg-[#12b7bd]/15 blur-3xl" />
@@ -724,20 +735,26 @@ export default function HomePage() {
         <PageFooter />
       </div>
 
+      {/* أنماط CSS المحسّنة */}
       <style jsx global>{`
-        /* جميع الأنماط مع تحسينات الأداء */
-
-        * {
+        *,
+        *::before,
+        *::after {
           box-sizing: border-box;
         }
 
         html {
           scroll-behavior: smooth;
+          -webkit-tap-highlight-color: transparent;
         }
 
         body {
           margin: 0;
+          padding: 0;
           background: #f7fcff;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: optimizeLegibility;
         }
 
         .tibyan-page,
@@ -745,20 +762,19 @@ export default function HomePage() {
         .tibyan-page input,
         .tibyan-page textarea,
         .tibyan-page select {
-          font-family: var(--font-tibyan), "IBM Plex Sans Arabic", Tahoma, Arial, sans-serif;
+          font-family: var(--font-tibyan), "IBM Plex Sans Arabic", system-ui, Tahoma, Arial, sans-serif;
         }
 
         .tibyan-page {
           font-synthesis: none;
-          text-rendering: optimizeLegibility;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
+          letter-spacing: 0;
         }
 
         .tibyan-page :where(h1, h2, h3, p, span, button) {
           letter-spacing: 0;
         }
 
+        /* الشبكة الطبية */
         .medical-grid {
           background-image:
             linear-gradient(rgba(8, 118, 217, 0.045) 1px, transparent 1px),
@@ -766,11 +782,10 @@ export default function HomePage() {
           background-size: 42px 42px;
           animation: gridMove 18s linear infinite;
           will-change: background-position;
-        }
-
-        .hero-shell {
           contain: layout style paint;
         }
+
+        /* تأثيرات الهيرو */
         .hero-shell::after {
           content: "";
           position: absolute;
@@ -793,13 +808,12 @@ export default function HomePage() {
           will-change: transform, opacity;
         }
 
+        /* الحلقات المدارية */
         .engineering-ring {
           animation: slowSpin 18s linear infinite;
           box-shadow: 0 0 50px rgba(18, 183, 189, 0.08);
           will-change: transform;
           contain: layout style paint;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .engineering-ring.reverse {
@@ -809,10 +823,6 @@ export default function HomePage() {
 
         .tibyan-logo-stage {
           --orbit-radius: 142px;
-          isolation: isolate;
-          contain: layout style paint;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .logo-core {
@@ -820,15 +830,12 @@ export default function HomePage() {
           filter: drop-shadow(0 28px 32px rgba(3, 82, 143, 0.2));
           transform-origin: 50% 55%;
           will-change: transform;
-          transform: translateZ(0);
-          backface-visibility: hidden;
+          contain: layout style paint;
         }
 
         .logo-aura {
           animation: logoAura 4.8s ease-in-out infinite;
           will-change: transform, opacity;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .orbit-energy-ring {
@@ -837,16 +844,12 @@ export default function HomePage() {
             inset 0 0 35px rgba(56, 201, 111, 0.04);
           animation: orbitEnergy 4s ease-in-out infinite;
           will-change: transform, opacity;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .orbit-runner {
           animation: orbitSpin 22s linear infinite;
           transform-origin: 50% 50%;
           will-change: transform;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .orbit-anchor {
@@ -856,8 +859,6 @@ export default function HomePage() {
         .orbit-counter {
           animation: orbitCounter 22s linear infinite;
           will-change: transform;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .orbit-badge {
@@ -869,56 +870,21 @@ export default function HomePage() {
             inset 0 1px 0 rgba(255, 255, 255, 0.9);
           animation: orbitBadgeBreath 3.8s ease-in-out infinite;
           will-change: transform;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
-        .orbit-slot:nth-child(5) .orbit-badge {
-          animation-delay: .35s;
-        }
-        .orbit-slot:nth-child(6) .orbit-badge {
-          animation-delay: .7s;
-        }
-        .orbit-slot:nth-child(7) .orbit-badge {
-          animation-delay: 1.05s;
-        }
-        .orbit-slot:nth-child(8) .orbit-badge {
-          animation-delay: 1.4s;
-        }
-        .orbit-slot:nth-child(9) .orbit-badge {
-          animation-delay: 1.75s;
-        }
-        .orbit-slot:nth-child(10) .orbit-badge {
-          animation-delay: 2.1s;
-        }
+        .orbit-slot:nth-child(5) .orbit-badge { animation-delay: .35s; }
+        .orbit-slot:nth-child(6) .orbit-badge { animation-delay: .7s; }
+        .orbit-slot:nth-child(7) .orbit-badge { animation-delay: 1.05s; }
+        .orbit-slot:nth-child(8) .orbit-badge { animation-delay: 1.4s; }
+        .orbit-slot:nth-child(9) .orbit-badge { animation-delay: 1.75s; }
+        .orbit-slot:nth-child(10) .orbit-badge { animation-delay: 2.1s; }
 
-        .tibyan-logo-stage:hover .orbit-runner,
-        .tibyan-logo-stage:hover .orbit-counter {
-          animation-play-state: paused;
-        }
-
-        /* إيقاف الحركات عندما يكون الشعار خارج الشاشة */
-        .logo-paused .tibyan-heartbeat,
-        .logo-paused .tibyan-leaf,
-        .logo-paused .tibyan-head,
-        .logo-paused .tibyan-blue-arc,
-        .logo-paused .tibyan-leaf-vein,
-        .logo-paused .orbit-runner,
-        .logo-paused .orbit-counter,
-        .logo-paused .orbit-energy-ring,
-        .logo-paused .logo-core,
-        .logo-paused .logo-aura,
-        .logo-paused .engineering-ring {
-          animation-play-state: paused !important;
-        }
-
+        /* تأثير نبض الشعار */
         .tibyan-heartbeat {
           stroke-dasharray: 260;
           stroke-dashoffset: 260;
           animation: heartbeatTrace 4.2s ease-in-out infinite;
           will-change: stroke-dashoffset, opacity;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .tibyan-leaf {
@@ -926,8 +892,6 @@ export default function HomePage() {
           transform-origin: 50% 80%;
           animation: leafBreath 4.6s ease-in-out infinite;
           will-change: transform;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .tibyan-head {
@@ -935,8 +899,6 @@ export default function HomePage() {
           transform-origin: center;
           animation: headBreath 4.5s ease-in-out infinite;
           will-change: transform;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .tibyan-blue-arc {
@@ -944,8 +906,6 @@ export default function HomePage() {
           transform-origin: 50% 85%;
           animation: blueArcBreath 4.8s ease-in-out infinite;
           will-change: transform;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
         .tibyan-leaf-vein {
@@ -953,13 +913,11 @@ export default function HomePage() {
           stroke-dashoffset: 0;
           animation: leafVeinFlow 4.6s ease-in-out infinite;
           will-change: stroke-dashoffset, opacity;
-          transform: translateZ(0);
-          backface-visibility: hidden;
         }
 
+        /* بطاقات الخدمات */
         .service-card {
           animation: cardEnter .75s both;
-          contain: layout style paint;
         }
 
         .service-card::after {
@@ -980,6 +938,7 @@ export default function HomePage() {
           transform: translateX(520%) rotate(18deg);
         }
 
+        /* تأثيرات الانتقال */
         .ai-button::after {
           content: "";
           position: absolute;
@@ -990,13 +949,11 @@ export default function HomePage() {
           animation: aiPulse 1.8s ease-out infinite;
         }
 
-        .transition-screen {
-          animation: screenIn .28s ease-out both;
-        }
-
-        .transition-logo {
-          animation: transitionLogo 1.2s cubic-bezier(.2,.85,.25,1) both;
-        }
+        .transition-screen { animation: screenIn .28s ease-out both; }
+        .transition-logo { animation: transitionLogo 1.2s cubic-bezier(.2,.85,.25,1) both; }
+        .transition-ring { animation: fastSpin 2.2s linear infinite; }
+        .transition-ring.reverse { animation-direction: reverse; animation-duration: 1.7s; }
+        .loading-line { animation: loadingProgress 1.25s ease-in-out both; transform-origin: right; }
 
         .transition-orbit {
           --x: 0px;
@@ -1005,19 +962,7 @@ export default function HomePage() {
           animation: orbitExplode 1.15s cubic-bezier(.22,.85,.25,1) var(--delay) both;
         }
 
-        .transition-ring {
-          animation: fastSpin 2.2s linear infinite;
-        }
-        .transition-ring.reverse {
-          animation-direction: reverse;
-          animation-duration: 1.7s;
-        }
-
-        .loading-line {
-          animation: loadingProgress 1.25s ease-in-out both;
-          transform-origin: right;
-        }
-
+        /* keyframes (كلها محسّنة بـ will-change) */
         @keyframes gridMove {
           to { background-position: 42px 42px; }
         }
@@ -1147,6 +1092,7 @@ export default function HomePage() {
           to { transform: scaleX(1); }
         }
 
+        /* تحسينات للأجهزة اللوحية */
         @media (min-width: 640px) {
           .tibyan-logo-stage {
             --orbit-radius: 180px;
@@ -1157,6 +1103,7 @@ export default function HomePage() {
           }
         }
 
+        /* تقليل الحركة للمستخدمين الذين يفضلون ذلك */
         @media (prefers-reduced-motion: reduce) {
           *,
           *::before,
@@ -1169,5 +1116,14 @@ export default function HomePage() {
         }
       `}</style>
     </main>
+  );
+}
+
+// ----- التصدير النهائي مع Suspense للمرونة -----
+export default function HomePage() {
+  return (
+    <Suspense fallback={<HomePageSkeleton />}>
+      <HomePageContent />
+    </Suspense>
   );
 }

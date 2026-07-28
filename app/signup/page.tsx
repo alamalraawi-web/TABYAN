@@ -394,7 +394,7 @@ export default function SignupPage() {
           ? "/main/consultations"
           : formData.role === "pharmacist"
           ? "/main/pharmacy"
-          : "/main/dashboard";
+          : "/";
       router.push(route);
     } catch (error: any) {
       setNotice({ type: "error", text: error.message || "حدث خطأ أثناء إنشاء الحساب" });
