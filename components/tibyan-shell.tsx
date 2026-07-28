@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -33,7 +32,7 @@ type Destination = {
 
 const NavigationContext = createContext<NavigationContextValue | null>(null);
 
-const AUTH_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password"];
+const AUTH_ROUTES = ["/login", "/signup", "/register", "/forgot-password", "/reset-password"];
 
 const AUTH_STORAGE_KEYS = [
   "token",
@@ -183,6 +182,73 @@ function ConsultationIcon(props: IconProps) {
   );
 }
 
+function TibyanLogo({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 320 320"
+      role="img"
+      aria-labelledby="tibyan-logo-title"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <title id="tibyan-logo-title">شعار مشروع تبيان الطبي</title>
+      <defs>
+        <linearGradient id="tibyan-cross" x1="58" y1="53" x2="211" y2="257" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#12c7c4" />
+          <stop offset="0.34" stopColor="#0789da" />
+          <stop offset="0.72" stopColor="#0758ba" />
+          <stop offset="1" stopColor="#073d91" />
+        </linearGradient>
+        <linearGradient id="tibyan-cross-light" x1="79" y1="62" x2="171" y2="203" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#4ee1dc" stopOpacity="0.62" />
+          <stop offset="1" stopColor="#2e7be0" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="tibyan-body" x1="157" y1="118" x2="218" y2="252" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#166dd1" />
+          <stop offset="0.52" stopColor="#0b82cc" />
+          <stop offset="1" stopColor="#0755ad" />
+        </linearGradient>
+        <linearGradient id="tibyan-leaf" x1="225" y1="91" x2="247" y2="278" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#53d977" />
+          <stop offset="0.52" stopColor="#28c87a" />
+          <stop offset="1" stopColor="#00a99d" />
+        </linearGradient>
+        <linearGradient id="tibyan-leaf-shine" x1="250" y1="112" x2="232" y2="246" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#a7f4b4" stopOpacity="0.82" />
+          <stop offset="1" stopColor="#27c98a" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="tibyan-lower-swoosh" x1="118" y1="280" x2="286" y2="203" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#0b69c7" />
+          <stop offset="0.56" stopColor="#08aeb5" />
+          <stop offset="1" stopColor="#37d16f" />
+        </linearGradient>
+        <radialGradient id="tibyan-head" cx="0" cy="0" r="1" gradientTransform="translate(154 84) rotate(57) scale(43)">
+          <stop stopColor="#ffffff" />
+          <stop offset="0.68" stopColor="#f8fdff" />
+          <stop offset="1" stopColor="#deeff8" />
+        </radialGradient>
+        <filter id="tibyan-logo-shadow" x="-28%" y="-28%" width="156%" height="170%">
+          <feDropShadow dx="0" dy="14" stdDeviation="13" floodColor="#075c9e" floodOpacity="0.22" />
+        </filter>
+      </defs>
+      <g filter="url(#tibyan-logo-shadow)">
+        <path d="M105 40C86 40 71 55 71 74V104H43C25 104 11 118 11 136V185C11 203 25 217 43 217H78L67 277L126 224C131 219 137 217 144 217H163V187H195C213 187 227 173 227 155V136C227 118 213 104 195 104H163V74C163 55 148 40 129 40H105Z" fill="url(#tibyan-cross)" />
+        <path d="M108 48C92 48 80 60 80 76V116H50C35 116 24 127 24 142V161C53 142 84 126 120 117C139 112 156 110 178 111V76C178 61 166 48 150 48H108Z" fill="url(#tibyan-cross-light)" />
+        <path className="tibyan-heartbeat" d="M29 160H72L82 141L94 183L111 119L129 193L145 151L158 168H193" fill="none" stroke="#ffffff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="158" cy="92" r="28" fill="url(#tibyan-head)" />
+        <circle cx="151" cy="84" r="9" fill="#ffffff" fillOpacity="0.72" />
+        <path d="M147 120C164 139 179 153 195 160C185 185 169 211 144 238C134 248 124 258 110 270C145 256 174 238 194 215C214 191 227 158 237 120C220 143 203 158 187 167C176 146 163 130 147 120Z" fill="#ffffff" />
+        <path d="M169 121C183 144 193 166 198 188C214 162 228 136 247 108C227 152 213 195 211 239C196 212 183 175 169 121Z" fill="url(#tibyan-body)" />
+        <path className="tibyan-leaf" d="M248 86C286 113 304 160 290 205C279 242 248 266 210 279C219 247 211 222 214 191C216 154 226 112 248 86Z" fill="url(#tibyan-leaf)" />
+        <path d="M252 104C275 132 282 164 274 194C267 220 249 240 224 254C236 221 233 195 238 165C241 143 246 122 252 104Z" fill="url(#tibyan-leaf-shine)" />
+        <path d="M263 121C261 158 250 194 229 231" fill="none" stroke="#ffffff" strokeWidth="4.5" strokeLinecap="round" strokeOpacity="0.9" />
+        <path d="M103 281C158 271 206 248 244 213C259 200 270 185 283 166C274 212 248 246 210 266C178 283 142 288 103 281Z" fill="url(#tibyan-lower-swoosh)" />
+        <path d="M119 275C160 264 197 245 227 218" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeOpacity="0.46" />
+      </g>
+    </svg>
+  );
+}
+
 function ResultIcon({ name }: { name: Destination["icon"] }) {
   const className = "h-5 w-5";
   if (name === "lab") return <LabIcon className={className} />;
@@ -216,14 +282,11 @@ export function TibyanShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!logoutOpen) return;
-
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !isLoggingOut) setLogoutOpen(false);
     };
-
     window.addEventListener("keydown", handleEscape);
     return () => {
       document.body.style.overflow = previousOverflow;
@@ -234,21 +297,18 @@ export function TibyanShell({ children }: { children: ReactNode }) {
   const navigate = useCallback(
     (href: string, title = "جاري فتح الصفحة", options: NavigateOptions = {}) => {
       if (!href || isTransitioning || href === pathname) return;
-
       clearTimers();
       setSearchOpen(false);
       setQuery("");
       setTransitionTitle(title);
       setIsTransitioning(true);
       router.prefetch(href);
-
       timers.current.push(
         window.setTimeout(() => {
           if (options.replace) router.replace(href);
           else router.push(href);
         }, 980),
       );
-
       timers.current.push(window.setTimeout(() => setIsTransitioning(false), 1550));
     },
     [clearTimers, isTransitioning, pathname, router],
@@ -256,18 +316,15 @@ export function TibyanShell({ children }: { children: ReactNode }) {
 
   const goBack = useCallback(() => {
     if (isTransitioning) return;
-
     clearTimers();
     setTransitionTitle("العودة إلى الصفحة السابقة");
     setIsTransitioning(true);
-
     timers.current.push(
       window.setTimeout(() => {
         if (window.history.length > 1) router.back();
         else router.push("/");
       }, 850),
     );
-
     timers.current.push(window.setTimeout(() => setIsTransitioning(false), 1450));
   }, [clearTimers, isTransitioning, router]);
 
@@ -280,27 +337,19 @@ export function TibyanShell({ children }: { children: ReactNode }) {
   const completeLogout = useCallback(async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
-
     try {
-      // attempt to sign out from Supabase auth (if used)
       try {
         await supabase.auth.signOut();
       } catch (err) {
-        // don't block logout if signOut fails
-        // log for debugging
-        // eslint-disable-next-line no-console
         console.warn("supabase signOut failed:", err);
       }
-
       AUTH_STORAGE_KEYS.forEach((key) => {
         window.localStorage.removeItem(key);
         window.sessionStorage.removeItem(key);
       });
-
       ["token", "authToken", "session", "tibyan-token"].forEach((cookieName) => {
         document.cookie = `${cookieName}=; Max-Age=0; path=/; SameSite=Lax`;
       });
-
       await new Promise((resolve) => window.setTimeout(resolve, 650));
       setLogoutOpen(false);
       setIsLoggingOut(false);
@@ -317,129 +366,145 @@ export function TibyanShell({ children }: { children: ReactNode }) {
     [goBack, isTransitioning, navigate],
   );
 
-  if (isAuthRoute) {
-    return <NavigationContext.Provider value={navigationValue}>{children}</NavigationContext.Provider>;
-  }
-
   return (
     <NavigationContext.Provider value={navigationValue}>
       <div dir="rtl" className="min-h-screen bg-[#f7fcff] text-[#073b72]">
-        <header className="tibyan-topbar sticky top-0 z-50 border-b border-[#0a86c7]/10 bg-white/85 backdrop-blur-2xl">
-          <div className="tibyan-topbar-inner mx-auto grid max-w-7xl grid-cols-[auto_minmax(220px,1fr)_auto] items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
-            <button
-              type="button"
-              onClick={() => navigate("/", "الصفحة الرئيسية")}
-              className="group flex shrink-0 items-center gap-2 rounded-2xl p-1.5 transition hover:bg-[#eafaff] focus:outline-none focus:ring-4 focus:ring-[#10b9bd]/20"
-              aria-label="العودة إلى الصفحة الرئيسية"
-            >
-              <span className="relative h-11 w-11 overflow-hidden rounded-2xl bg-white shadow-[0_8px_25px_rgba(4,83,145,0.15)] ring-1 ring-[#0a86c7]/10">
-                <Image
-                  src="/logo.png"
-                  alt="شعار تبيان"
-                  fill
-                  priority
-                  sizes="44px"
-                  className="object-contain transition duration-500 group-hover:scale-110 group-hover:rotate-3"
-                />
-              </span>
-              <span className="hidden text-right lg:block">
-                <span className="block text-base font-black leading-none text-[#075dab]">تبيان</span>
-                <span className="mt-1 block text-[10px] font-bold text-[#12a8a9]">طبٌ بهندسةٍ أذكى</span>
-              </span>
-            </button>
+        <div className="tibyan-header-wrap sticky z-50">
+          <header className="tibyan-topbar">
+            <div className="tibyan-topbar-inner">
+              <button
+                type="button"
+                onClick={() => navigate("/", "الصفحة الرئيسية")}
+                className="tibyan-brand-button"
+                aria-label="العودة إلى الصفحة الرئيسية"
+              >
+                <span className="tibyan-brand-logo">
+                  <TibyanLogo className="h-full w-full overflow-visible" />
+                </span>
+                <span className="tibyan-brand-copy">
+                  <strong className="tibyan-brand-name">تبيان</strong>
+                  <span className="tibyan-brand-tagline">صحتك أوضح بذكاء</span>
+                </span>
+              </button>
 
-            <div className="tibyan-search relative mx-auto w-full max-w-xl">
-              <SearchIcon className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#0b8bb9]" />
-              <input
-                value={query}
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setSearchOpen(true);
-                }}
-                onFocus={() => setSearchOpen(true)}
-                onBlur={() => window.setTimeout(() => setSearchOpen(false), 160)}
-                placeholder="ابحث عن فحص، دواء، تغذية أو استشارة..."
-                className="h-12 w-full rounded-2xl border border-[#0a86c7]/15 bg-[#f7fcff]/90 pr-12 pl-4 text-sm font-semibold text-[#073b72] outline-none transition placeholder:text-[#6e9bb8] focus:border-[#12b7bd] focus:bg-white focus:shadow-[0_0_0_5px_rgba(18,183,189,0.10)]"
-                aria-label="البحث داخل تبيان"
-              />
-
-              {searchOpen && (
-                <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-[60] max-h-[360px] overflow-y-auto rounded-2xl border border-[#0a86c7]/10 bg-white p-2 shadow-[0_24px_70px_rgba(4,67,122,0.18)]">
-                  {filteredResults.length > 0 ? (
-                    filteredResults.map((item) => (
-                      <button
-                        key={item.href}
-                        type="button"
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => navigate(item.href, item.title)}
-                        className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-right transition hover:bg-[#ecfbfb]"
-                      >
-                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#0876d9] to-[#10b5b5] text-white">
-                          <ResultIcon name={item.icon} />
-                        </span>
-                        <span className="min-w-0">
-                          <span className="block truncate text-sm font-black text-[#075dab]">{item.title}</span>
-                          <span className="mt-0.5 block truncate text-xs text-[#6b91a8]">{item.hint}</span>
-                        </span>
-                      </button>
-                    ))
-                  ) : (
-                    <p className="px-4 py-5 text-center text-sm font-semibold text-[#6b91a8]">
-                      لم نعثر على خدمة بهذا الاسم.
-                    </p>
+              {isAuthRoute ? (
+                <div className="tibyan-auth-area">
+                  <span className="tibyan-auth-title">
+                    {pathname === "/signup"
+                      ? "إنشاء حساب"
+                      : pathname === "/forgot-password"
+                        ? "استعادة الحساب"
+                        : pathname === "/reset-password"
+                          ? "إعادة تعيين كلمة المرور"
+                          : "تسجيل الدخول"}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/", "الصفحة الرئيسية")}
+                    className="tibyan-action-button"
+                    aria-label="العودة إلى الصفحة الرئيسية"
+                    title="الرئيسية"
+                  >
+                    <BackIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="tibyan-top-actions">
+                  {pathname !== "/" && (
+                    <button
+                      type="button"
+                      onClick={goBack}
+                      className="tibyan-action-button"
+                      aria-label="الرجوع إلى الصفحة السابقة"
+                      title="رجوع"
+                    >
+                      <BackIcon className="h-5 w-5" />
+                    </button>
                   )}
+                  <button
+                    type="button"
+                    onClick={() => navigate("/ai", "المساعد الذكي")}
+                    className="ai-button tibyan-ai-button"
+                    aria-label="فتح المساعد الذكي"
+                    title="المساعد الذكي"
+                  >
+                    <AiIcon className="relative h-6 w-6" />
+                    <span className="tibyan-online-dot" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/main/settings", "الإعدادات")}
+                    className="tibyan-action-button"
+                    aria-label="فتح الإعدادات"
+                    title="الإعدادات"
+                  >
+                    <SettingsIcon className="h-6 w-6" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLogoutOpen(true)}
+                    className="tibyan-logout-button"
+                    aria-label="تسجيل الخروج من الحساب"
+                    title="تسجيل الخروج"
+                  >
+                    <LogoutIcon className="h-5 w-5" />
+                    <span>خروج</span>
+                  </button>
                 </div>
               )}
             </div>
+          </header>
 
-            <div className="tibyan-top-actions flex shrink-0 items-center gap-2">
-              {pathname !== "/" && (
-                <button
-                  type="button"
-                  onClick={goBack}
-                  className="tibyan-action-button group grid h-11 w-11 place-items-center rounded-2xl border border-[#0a86c7]/15 bg-white text-[#0876d9] shadow-sm transition hover:-translate-y-0.5 hover:border-[#12b7bd] hover:bg-[#effcfc] hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#12b7bd]/15"
-                  aria-label="الرجوع إلى الصفحة السابقة"
-                  title="رجوع"
-                >
-                  <BackIcon className="h-5 w-5 transition group-hover:translate-x-0.5" />
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={() => navigate("/ai", "المساعد الذكي")}
-                className="ai-button group relative grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-[#0876d9] via-[#0a9cd1] to-[#12b7bd] text-white shadow-[0_12px_30px_rgba(8,118,217,0.28)] focus:outline-none focus:ring-4 focus:ring-[#0876d9]/20"
-                aria-label="فتح المساعد الذكي"
-                title="المساعد الذكي"
-              >
-                <span className="absolute inset-0 rounded-2xl border border-white/35" />
-                <AiIcon className="relative h-6 w-6 transition duration-500 group-hover:rotate-12 group-hover:scale-110" />
-                <span className="absolute -left-1 -top-1 h-3 w-3 rounded-full bg-[#42d66f] ring-4 ring-white" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => navigate("/main/settings", "الإعدادات")}
-                className="tibyan-action-button group grid h-11 w-11 place-items-center rounded-2xl border border-[#0a86c7]/15 bg-white text-[#0876d9] shadow-sm transition hover:-translate-y-0.5 hover:border-[#12b7bd] hover:bg-[#effcfc] hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#12b7bd]/15"
-                aria-label="فتح الإعدادات"
-                title="الإعدادات"
-              >
-                <SettingsIcon className="h-6 w-6 transition duration-700 group-hover:rotate-90" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setLogoutOpen(true)}
-                className="tibyan-logout-button group inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-[#ef4444]/20 bg-[#fff7f7] px-3 text-[#d93645] shadow-sm transition hover:-translate-y-0.5 hover:border-[#ef4444]/35 hover:bg-[#fff0f0] hover:shadow-[0_12px_28px_rgba(217,54,69,0.14)] focus:outline-none focus:ring-4 focus:ring-[#ef4444]/10"
-                aria-label="تسجيل الخروج من الحساب"
-                title="تسجيل الخروج"
-              >
-                <LogoutIcon className="h-5 w-5 transition duration-300 group-hover:-translate-x-0.5" />
-                <span className="hidden text-xs font-black xl:inline">خروج</span>
-              </button>
+          {!isAuthRoute && pathname !== "/" && (
+            <div className="tibyan-search-shell">
+              <div className="tibyan-search">
+                <SearchIcon className="tibyan-search-icon" />
+                <input
+                  value={query}
+                  onChange={(event) => {
+                    setQuery(event.target.value);
+                    setSearchOpen(true);
+                  }}
+                  onFocus={() => setSearchOpen(true)}
+                  onBlur={() => window.setTimeout(() => setSearchOpen(false), 160)}
+                  placeholder="ابحث عن فحص، دواء، تغذية أو استشارة..."
+                  aria-label="البحث داخل تبيان"
+                />
+                {searchOpen && (
+                  <div className="tibyan-search-results">
+                    {filteredResults.length > 0 ? (
+                      filteredResults.map((item) => (
+                        <button
+                          key={item.href}
+                          type="button"
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => navigate(item.href, item.title)}
+                          className="tibyan-search-result"
+                        >
+                          <span className="tibyan-result-icon">
+                            <ResultIcon name={item.icon} />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block truncate text-sm font-black text-[#075dab]">
+                              {item.title}
+                            </span>
+                            <span className="mt-0.5 block truncate text-xs text-[#6b91a8]">
+                              {item.hint}
+                            </span>
+                          </span>
+                        </button>
+                      ))
+                    ) : (
+                      <p className="px-4 py-5 text-center text-sm font-semibold text-[#6b91a8]">
+                        لم نعثر على خدمة بهذا الاسم.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </header>
+          )}
+        </div>
 
         {children}
       </div>
@@ -498,7 +563,6 @@ export function TibyanShell({ children }: { children: ReactNode }) {
                 >
                   البقاء في الحساب
                 </button>
-
                 <button
                   type="button"
                   onClick={completeLogout}
@@ -532,7 +596,6 @@ export function TibyanShell({ children }: { children: ReactNode }) {
           <div className="relative grid h-[320px] w-[320px] place-items-center sm:h-[390px] sm:w-[390px]">
             <div className="transition-ring absolute inset-5 rounded-full border border-dashed border-[#0876d9]/30" />
             <div className="transition-ring reverse absolute inset-12 rounded-full border border-[#12b7bd]/25" />
-
             {orbitItems.map((item, index) => (
               <div
                 key={item.label}
@@ -549,18 +612,10 @@ export function TibyanShell({ children }: { children: ReactNode }) {
                 {item.icon}
               </div>
             ))}
-
             <div className="transition-logo relative z-10 h-36 w-36 overflow-hidden rounded-[2.2rem] bg-white p-1 shadow-[0_30px_70px_rgba(4,75,132,0.28)] ring-1 ring-[#0a86c7]/10 sm:h-44 sm:w-44">
-              <Image
-                src="/logo.png"
-                alt="شعار تبيان أثناء الانتقال"
-                fill
-                sizes="176px"
-                className="object-contain"
-              />
+              <TibyanLogo className="h-full w-full overflow-visible" />
             </div>
           </div>
-
           <div className="absolute bottom-[14%] text-center">
             <p className="text-lg font-black text-[#075dab]">{transitionTitle}</p>
             <div className="mx-auto mt-3 h-1.5 w-40 overflow-hidden rounded-full bg-[#0a86c7]/10">
@@ -571,32 +626,241 @@ export function TibyanShell({ children }: { children: ReactNode }) {
       )}
 
       <style jsx global>{`
+        /* الشريط العلوي الموحد */
+        .tibyan-header-wrap {
+          top: 8px;
+          width: 100%;
+          pointer-events: none;
+        }
+        .tibyan-header-wrap > * {
+          pointer-events: auto;
+        }
         .tibyan-topbar {
-          box-shadow: 0 12px 40px rgba(4, 74, 126, 0.06);
+          position: relative;
+          top: auto;
+          width: calc(100% - 24px);
+          max-width: 1500px;
+          margin: 8px auto 0;
+          border: 1px solid rgba(7, 92, 145, 0.11);
+          border-radius: 26px;
+          background: rgba(255, 255, 255, 0.95);
+          box-shadow: 0 18px 45px rgba(3, 66, 112, 0.13);
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+          overflow: visible;
         }
-
-        .tibyan-logout-backdrop {
-          animation: tibyanBackdropIn 0.22s ease-out both;
+        .tibyan-topbar-inner {
+          min-height: 78px;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          align-items: center;
+          gap: 16px;
+          padding: 10px 16px;
         }
-
-        .tibyan-logout-dialog {
-          animation: tibyanDialogIn 0.34s cubic-bezier(.2,.85,.25,1.15) both;
+        .tibyan-brand-button {
+          min-width: 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 3px;
+          border: 0;
+          border-radius: 18px;
+          background: transparent;
+          cursor: pointer;
         }
-
-        .tibyan-logout-spinner {
-          animation: tibyanSpinner 0.7s linear infinite;
+        .tibyan-brand-logo {
+          width: 58px;
+          height: 58px;
+          flex: 0 0 58px;
+          display: grid;
+          place-items: center;
+          overflow: visible;
+          filter: drop-shadow(0 8px 14px rgba(3, 82, 143, 0.16));
         }
-
-        .ai-button::after {
-          content: "";
+        .tibyan-brand-copy {
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          line-height: 1;
+        }
+        .tibyan-brand-name {
+          display: block;
+          white-space: nowrap;
+          color: #07569f;
+          font-size: clamp(1.05rem, 1.4vw, 1.35rem);
+          font-weight: 700;
+          line-height: 1.15;
+        }
+        .tibyan-brand-tagline {
+          display: block;
+          margin-top: 4px;
+          white-space: nowrap;
+          color: #0ca5ad;
+          font-size: clamp(.52rem, .66vw, .68rem);
+          font-weight: 700;
+          line-height: 1.15;
+        }
+        .tibyan-top-actions,
+        .tibyan-auth-area {
+          margin-inline-start: auto;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 8px;
+          flex: 0 0 auto;
+        }
+        .tibyan-auth-title {
+          color: #0b8bb9;
+          font-size: .86rem;
+          font-weight: 800;
+          white-space: nowrap;
+        }
+        .tibyan-action-button,
+        .tibyan-ai-button,
+        .tibyan-logout-button {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 14px;
+          transition: transform .2s ease, box-shadow .2s ease;
+        }
+        .tibyan-action-button {
+          width: 42px;
+          height: 42px;
+          border: 1px solid rgba(8, 118, 217, .14);
+          background: #fff;
+          color: #0876d9;
+          box-shadow: 0 7px 16px rgba(3, 77, 132, .09);
+        }
+        .tibyan-ai-button {
+          position: relative;
+          width: 42px;
+          height: 42px;
+          border: 0;
+          background: linear-gradient(145deg, #0cb8c0, #078fd0);
+          color: #fff;
+          box-shadow: 0 10px 24px rgba(8, 118, 217, .24);
+        }
+        .tibyan-online-dot {
           position: absolute;
-          inset: -5px;
-          z-index: -1;
-          border-radius: 20px;
-          border: 1px solid rgba(18, 183, 189, .35);
-          animation: aiPulse 1.8s ease-out infinite;
+          top: -3px;
+          right: -3px;
+          width: 11px;
+          height: 11px;
+          border: 2px solid #fff;
+          border-radius: 999px;
+          background: #42d66f;
+        }
+        .tibyan-logout-button {
+          min-height: 42px;
+          gap: 7px;
+          padding: 0 13px;
+          border: 1px solid rgba(239, 68, 68, .20);
+          background: #fff7f7;
+          color: #d93645;
+          font-size: .76rem;
+          font-weight: 800;
+          box-shadow: 0 7px 16px rgba(217, 54, 69, .08);
+        }
+        .tibyan-action-button:hover,
+        .tibyan-ai-button:hover,
+        .tibyan-logout-button:hover {
+          transform: translateY(-2px);
         }
 
+        /* شريط البحث المنفصل */
+        .tibyan-search-shell {
+          width: calc(100% - 24px);
+          max-width: 1500px;
+          margin: 8px auto 0;
+          padding: 6px 10px;
+          border: 1px solid rgba(7, 92, 145, 0.10);
+          border-radius: 18px;
+          background: rgba(255, 255, 255, 0.93);
+          box-shadow: 0 12px 30px rgba(3, 66, 112, 0.09);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+        }
+        .tibyan-search {
+          position: relative;
+          width: 100%;
+          min-width: 0;
+        }
+        .tibyan-search > input {
+          width: 100%;
+          height: 34px;
+          padding: 0 42px 0 14px;
+          border: 1px solid rgba(8, 118, 217, 0.14);
+          border-radius: 11px;
+          outline: 0;
+          background: #f7fcff;
+          color: #315f7a;
+          font-size: .78rem;
+          font-weight: 600;
+          transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+        .tibyan-search > input::placeholder {
+          color: #87a5b7;
+        }
+        .tibyan-search > input:focus {
+          border-color: rgba(12, 170, 184, .45);
+          background: #fff;
+          box-shadow: 0 0 0 4px rgba(12, 170, 184, .10);
+        }
+        .tibyan-search-icon {
+          position: absolute;
+          z-index: 2;
+          top: 50%;
+          right: 14px;
+          width: 17px;
+          height: 17px;
+          transform: translateY(-50%);
+          color: #0b91bd;
+          pointer-events: none;
+        }
+        .tibyan-search-results {
+          position: absolute;
+          z-index: 70;
+          top: calc(100% + 9px);
+          right: 0;
+          left: 0;
+          max-height: 360px;
+          overflow-y: auto;
+          padding: 8px;
+          border: 1px solid rgba(10, 134, 199, .10);
+          border-radius: 18px;
+          background: #fff;
+          box-shadow: 0 24px 70px rgba(4, 67, 122, .18);
+        }
+        .tibyan-search-result {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 11px 12px;
+          border: 0;
+          border-radius: 13px;
+          background: transparent;
+          text-align: right;
+          cursor: pointer;
+          transition: background .2s ease;
+        }
+        .tibyan-search-result:hover {
+          background: #ecfbfb;
+        }
+        .tibyan-result-icon {
+          width: 40px;
+          height: 40px;
+          flex: 0 0 40px;
+          display: grid;
+          place-items: center;
+          border-radius: 12px;
+          background: linear-gradient(145deg, #0876d9, #10b5b5);
+          color: #fff;
+        }
+
+        /* حركات الانتقال والخلفيات */
         .transition-grid {
           background-image:
             linear-gradient(rgba(8, 118, 217, 0.045) 1px, transparent 1px),
@@ -604,75 +868,46 @@ export function TibyanShell({ children }: { children: ReactNode }) {
           background-size: 42px 42px;
           animation: gridMove 18s linear infinite;
         }
-
         .transition-screen {
           animation: screenIn .28s ease-out both;
         }
-
         .transition-logo {
           animation: transitionLogo 1.2s cubic-bezier(.2,.85,.25,1) both;
         }
-
         .transition-orbit {
           --x: 0px;
           --y: 0px;
           --delay: 0ms;
           animation: orbitExplode 1.15s cubic-bezier(.22,.85,.25,1) var(--delay) both;
         }
-
         .transition-ring {
           animation: fastSpin 2.2s linear infinite;
         }
-
         .transition-ring.reverse {
           animation-direction: reverse;
           animation-duration: 1.7s;
         }
-
         .loading-line {
           animation: loadingProgress 1.25s ease-in-out both;
           transform-origin: right;
         }
 
-        @keyframes tibyanBackdropIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes tibyanDialogIn {
-          from { opacity: 0; transform: translateY(24px) scale(.94); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        @keyframes tibyanSpinner {
-          to { transform: rotate(360deg); }
-        }
-
-        @keyframes aiPulse {
-          0% { transform: scale(.9); opacity: .85; }
-          100% { transform: scale(1.28); opacity: 0; }
-        }
-
         @keyframes gridMove {
           to { background-position: 42px 42px; }
         }
-
         @keyframes screenIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-
         @keyframes fastSpin {
           to { transform: rotate(360deg); }
         }
-
         @keyframes transitionLogo {
           0% { opacity: 0; transform: scale(.45) rotate(-18deg); filter: blur(10px); }
           35% { opacity: 1; transform: scale(1.08) rotate(3deg); filter: blur(0); }
           75% { transform: scale(.94) rotate(-2deg); }
           100% { transform: scale(1) rotate(0deg); }
         }
-
         @keyframes orbitExplode {
           0% {
             opacity: 0;
@@ -691,56 +926,100 @@ export function TibyanShell({ children }: { children: ReactNode }) {
             transform: translate(0, 0) scale(.22) rotate(180deg);
           }
         }
-
         @keyframes loadingProgress {
           from { transform: scaleX(0); }
           to { transform: scaleX(1); }
         }
 
+        /* تجاوب الجوال */
         @media (max-width: 760px) {
+          .tibyan-topbar {
+            top: 6px;
+            width: calc(100% - 16px);
+            margin-top: 6px;
+            border-radius: 20px;
+          }
           .tibyan-topbar-inner {
-            grid-template-columns: auto 1fr;
-          }
-
-          .tibyan-top-actions {
-            justify-self: end;
-          }
-
-          .tibyan-search {
-            grid-column: 1 / -1;
-            grid-row: 2;
-            max-width: none;
-          }
-
-          .tibyan-logout-button {
-            width: 44px;
-            padding-inline: 0;
-          }
-        }
-
-        @media (max-width: 420px) {
-          .tibyan-topbar-inner {
+            min-height: auto;
+            padding: 8px 9px 9px;
             gap: 8px;
-            padding-inline: 10px;
           }
-
+          .tibyan-brand-logo {
+            width: 43px;
+            height: 43px;
+            flex-basis: 43px;
+          }
+          .tibyan-brand-name {
+            font-size: .98rem;
+          }
+          .tibyan-brand-tagline {
+            margin-top: 3px;
+            font-size: .49rem;
+          }
+          .tibyan-search-shell {
+            width: calc(100% - 16px);
+            margin-top: 6px;
+            padding: 5px 7px;
+            border-radius: 15px;
+          }
+          .tibyan-search > input {
+            height: 32px;
+            border-radius: 10px;
+            font-size: .72rem;
+          }
           .tibyan-top-actions {
             gap: 5px;
           }
-
           .tibyan-action-button,
-          .tibyan-logout-button,
-          .ai-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 14px;
+          .tibyan-ai-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+          }
+          .tibyan-logout-button {
+            width: 36px;
+            min-height: 36px;
+            padding: 0;
+            border-radius: 12px;
+          }
+          .tibyan-logout-button span {
+            display: none;
+          }
+          .tibyan-auth-title {
+            display: none;
           }
         }
-
+        @media (max-width: 390px) {
+          .tibyan-topbar-inner {
+            padding-inline: 7px;
+          }
+          .tibyan-brand-logo {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+          }
+          .tibyan-brand-name {
+            font-size: .90rem;
+          }
+          .tibyan-brand-tagline {
+            font-size: .45rem;
+          }
+          .tibyan-action-button,
+          .tibyan-ai-button,
+          .tibyan-logout-button {
+            width: 33px;
+            height: 33px;
+            min-height: 33px;
+            border-radius: 10px;
+          }
+          .tibyan-action-button svg,
+          .tibyan-ai-button svg,
+          .tibyan-logout-button svg {
+            width: 17px;
+            height: 17px;
+          }
+        }
         @media (prefers-reduced-motion: reduce) {
-          .tibyan-logout-backdrop,
-          .tibyan-logout-dialog,
-          .tibyan-logout-spinner,
           .transition-screen,
           .transition-logo,
           .transition-orbit,
