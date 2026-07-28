@@ -106,155 +106,258 @@ function ClipboardIcon(props: IconProps) {
   );
 }
 
+
 /**
  * شعار تبيان مرسوم بالكامل داخل الكود بصيغة SVG.
- * لا يعتمد على أي صورة خارجية، وتبقى الخلفية شفافة في جميع المقاسات.
+ * تمت إعادة رسمه وفق الصورة المرجعية الجديدة، من دون استخدام أي ملف صورة.
  */
 function TibyanLogo({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 320 320"
+      viewBox="70 180 520 520"
       role="img"
       aria-labelledby="tibyan-logo-title tibyan-logo-description"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid meet"
     >
       <title id="tibyan-logo-title">شعار مشروع تبيان الطبي</title>
       <desc id="tibyan-logo-description">
-        علامة طبية تجمع الصليب والنبض والإنسان والورقة الصحية.
+        شعار طبي يجمع الصليب ونبض القلب والإنسان والورقة الصحية.
       </desc>
 
       <defs>
-        <linearGradient id="tibyan-cross" x1="58" y1="53" x2="211" y2="257" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#12c7c4" />
-          <stop offset="0.34" stopColor="#0789da" />
-          <stop offset="0.72" stopColor="#0758ba" />
-          <stop offset="1" stopColor="#073d91" />
+        <linearGradient
+          id="tibyan-main-gradient"
+          x1="330"
+          y1="205"
+          x2="230"
+          y2="650"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0" stopColor="#16c9ca" />
+          <stop offset="0.24" stopColor="#0796d7" />
+          <stop offset="0.58" stopColor="#0874d6" />
+          <stop offset="1" stopColor="#073fbd" />
         </linearGradient>
 
-        <linearGradient id="tibyan-cross-light" x1="79" y1="62" x2="171" y2="203" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#4ee1dc" stopOpacity="0.62" />
-          <stop offset="1" stopColor="#2e7be0" stopOpacity="0" />
+        <linearGradient
+          id="tibyan-blue-swoosh"
+          x1="520"
+          y1="290"
+          x2="400"
+          y2="555"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0" stopColor="#0876df" />
+          <stop offset="0.52" stopColor="#075dca" />
+          <stop offset="1" stopColor="#0879d6" />
         </linearGradient>
 
-        <linearGradient id="tibyan-body" x1="157" y1="118" x2="218" y2="252" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#166dd1" />
-          <stop offset="0.52" stopColor="#0b82cc" />
-          <stop offset="1" stopColor="#0755ad" />
+        <linearGradient
+          id="tibyan-green-gradient"
+          x1="525"
+          y1="330"
+          x2="300"
+          y2="645"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0" stopColor="#49d78b" />
+          <stop offset="0.48" stopColor="#27c79b" />
+          <stop offset="1" stopColor="#00a9b5" />
         </linearGradient>
 
-        <linearGradient id="tibyan-leaf" x1="225" y1="91" x2="247" y2="278" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#53d977" />
-          <stop offset="0.52" stopColor="#28c87a" />
-          <stop offset="1" stopColor="#00a99d" />
+        <linearGradient
+          id="tibyan-main-shine"
+          x1="258"
+          y1="205"
+          x2="330"
+          y2="405"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#62e8e4" stopOpacity="0.4" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
 
-        <linearGradient id="tibyan-leaf-shine" x1="250" y1="112" x2="232" y2="246" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#a7f4b4" stopOpacity="0.82" />
-          <stop offset="1" stopColor="#27c98a" stopOpacity="0" />
-        </linearGradient>
-
-        <linearGradient id="tibyan-lower-swoosh" x1="118" y1="280" x2="286" y2="203" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0b69c7" />
-          <stop offset="0.56" stopColor="#08aeb5" />
-          <stop offset="1" stopColor="#37d16f" />
-        </linearGradient>
-
-        <radialGradient id="tibyan-head" cx="0" cy="0" r="1" gradientTransform="translate(154 84) rotate(57) scale(43)">
-          <stop stopColor="#ffffff" />
-          <stop offset="0.68" stopColor="#f8fdff" />
-          <stop offset="1" stopColor="#deeff8" />
+        <radialGradient
+          id="tibyan-head-gradient"
+          cx="0"
+          cy="0"
+          r="1"
+          gradientTransform="translate(383 291) rotate(52) scale(65)"
+        >
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="0.72" stopColor="#ffffff" />
+          <stop offset="1" stopColor="#eef7fb" />
         </radialGradient>
 
-        <filter id="tibyan-logo-shadow" x="-28%" y="-28%" width="156%" height="170%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="14" stdDeviation="13" floodColor="#075c9e" floodOpacity="0.22" />
+        <filter
+          id="tibyan-logo-shadow"
+          x="-30%"
+          y="-30%"
+          width="160%"
+          height="175%"
+          colorInterpolationFilters="sRGB"
+        >
+          <feDropShadow
+            dx="0"
+            dy="16"
+            stdDeviation="14"
+            floodColor="#075c9e"
+            floodOpacity="0.2"
+          />
         </filter>
 
-        <filter id="tibyan-inner-glow" x="-40%" y="-40%" width="180%" height="180%" colorInterpolationFilters="sRGB">
-          <feGaussianBlur stdDeviation="5" result="blur" />
-          <feComposite in="blur" in2="SourceGraphic" operator="out" result="glow" />
-          <feColorMatrix
-            in="glow"
-            type="matrix"
-            values="0 0 0 0 0.16 0 0 0 0 0.82 0 0 0 0 0.91 0 0 0 .42 0"
-          />
-          <feBlend in="SourceGraphic" />
+        <filter
+          id="tibyan-pulse-glow"
+          x="-30%"
+          y="-60%"
+          width="160%"
+          height="220%"
+          colorInterpolationFilters="sRGB"
+        >
+          <feGaussianBlur stdDeviation="2.3" result="pulseBlur" />
+          <feMerge>
+            <feMergeNode in="pulseBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
         </filter>
       </defs>
 
       <g filter="url(#tibyan-logo-shadow)">
-        {/* كتلة الصليب الطبية — بنفس اتجاه الشعار الأصلي */}
+        {/* الصليب الطبي والجسم الأزرق في كتلة واحدة */}
         <path
-          d="M105 40C86 40 71 55 71 74V104H43C25 104 11 118 11 136V185C11 203 25 217 43 217H78L67 277L126 224C131 219 137 217 144 217H163V187H195C213 187 227 173 227 155V136C227 118 213 104 195 104H163V74C163 55 148 40 129 40H105Z"
-          fill="url(#tibyan-cross)"
+          d="M398 205
+             L319 201 L267 201
+             C250 201 238 208 228 222
+             C224 229 226 249 226 326
+             L124 326
+             C104 326 87 343 87 364
+             L87 495
+             C87 517 104 534 125 534
+             L226 536
+             L226 616
+             C207 632 195 645 190 667
+             C222 638 253 626 276 614
+             C321 591 344 559 352 512
+             C356 479 343 430 316 380
+             C308 365 301 354 298 344
+             C324 360 346 368 373 368
+             C400 368 417 356 424 337
+             C430 320 422 296 422 270
+             L422 240
+             C422 219 412 205 398 205
+             Z
+
+             M382 273
+             C405 273 423 289 423 309
+             C423 330 405 345 388 345
+             C368 345 354 330 354 309
+             C354 288 369 273 382 273
+             Z"
+          fill="url(#tibyan-main-gradient)"
+          fillRule="evenodd"
+          clipRule="evenodd"
         />
 
+        {/* لمعان علوي ناعم مطابق لطابع الصورة */}
         <path
-          d="M108 48C92 48 80 60 80 76V116H50C35 116 24 127 24 142V161C53 142 84 126 120 117C139 112 156 110 178 111V76C178 61 166 48 150 48H108Z"
-          fill="url(#tibyan-cross-light)"
+          d="M398 205
+             L319 201 L267 201
+             C246 201 228 218 228 239
+             L228 326
+             C278 324 327 333 365 355
+             C391 369 418 353 424 331
+             C429 309 422 287 422 240
+             C422 219 412 205 398 205Z"
+          fill="url(#tibyan-main-shine)"
         />
 
-        {/* نبضة القلب */}
+        {/* نبض القلب المتحرك */}
         <path
           className="tibyan-heartbeat"
-          d="M29 160H72L82 141L94 183L111 119L129 193L145 151L158 168H193"
+          d="M87 436
+             H178
+             L195 410
+             L222 492
+             L250 366
+             L276 470
+             L289 436
+             H339"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="6"
+          strokeWidth="8"
           strokeLinecap="round"
           strokeLinejoin="round"
+          filter="url(#tibyan-pulse-glow)"
         />
 
-        {/* رأس الإنسان */}
-        <circle cx="158" cy="92" r="28" fill="url(#tibyan-head)" />
-        <circle cx="151" cy="84" r="9" fill="#ffffff" fillOpacity="0.72" />
+        {/* الرأس الأبيض */}
+        <circle
+          className="tibyan-head"
+          cx="388"
+          cy="309"
+          r="36"
+          fill="url(#tibyan-head-gradient)"
+        />
 
-        {/* الجسم الأبيض الذي يفصل الصليب عن الورقة */}
+        {/* القوس الأزرق الطويل */}
         <path
-          d="M147 120C164 139 179 153 195 160C185 185 169 211 144 238C134 248 124 258 110 270C145 256 174 238 194 215C214 191 227 158 237 120C220 143 203 158 187 167C176 146 163 130 147 120Z"
-          fill="#ffffff"
+          className="tibyan-blue-arc"
+          d="M535 287
+             C503 319 470 352 445 380
+             C424 404 409 427 400 456
+             C390 490 394 526 410 558
+             C403 526 408 491 419 458
+             C433 420 463 385 501 344
+             Z"
+          fill="url(#tibyan-blue-swoosh)"
         />
 
-        {/* انحناءة الجسم الزرقاء */}
-        <path
-          d="M169 121C183 144 193 166 198 188C214 162 228 136 247 108C227 152 213 195 211 239C196 212 183 175 169 121Z"
-          fill="url(#tibyan-body)"
-        />
-
-        {/* الورقة الصحية */}
+        {/* الورقة والقوس السفلي الأخضر */}
         <path
           className="tibyan-leaf"
-          d="M248 86C286 113 304 160 290 205C279 242 248 266 210 279C219 247 211 222 214 191C216 154 226 112 248 86Z"
-          fill="url(#tibyan-leaf)"
+          d="M529 333
+             C515 350 507 362 502 369
+             C481 397 461 419 448 437
+             C432 458 423 482 421 508
+             C420 524 421 539 424 551
+             C441 539 459 520 470 508
+             C485 491 495 470 501 453
+             C505 442 507 442 505 453
+             C501 476 489 505 470 529
+             C452 551 431 570 406 584
+             C370 604 322 620 271 638
+             L271 644
+             C339 634 395 619 441 602
+             C485 585 519 558 540 527
+             C560 497 566 463 562 428
+             C560 390 547 355 529 333
+             Z"
+          fill="url(#tibyan-green-gradient)"
         />
 
+        {/* الفاصل الأبيض داخل الورقة */}
         <path
-          d="M252 104C275 132 282 164 274 194C267 220 249 240 224 254C236 221 233 195 238 165C241 143 246 122 252 104Z"
-          fill="url(#tibyan-leaf-shine)"
-        />
-
-        <path
-          d="M263 121C261 158 250 194 229 231"
+          className="tibyan-leaf-vein"
+          d="M505 448
+             C494 478 478 506 456 531
+             C444 544 433 553 424 558"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="4.5"
+          strokeWidth="8"
           strokeLinecap="round"
-          strokeOpacity="0.9"
         />
 
-        {/* السهم السفلي الذي يجمع عناصر العلامة */}
+        {/* لمعان رفيع في الذيل السفلي */}
         <path
-          d="M103 281C158 271 206 248 244 213C259 200 270 185 283 166C274 212 248 246 210 266C178 283 142 288 103 281Z"
-          fill="url(#tibyan-lower-swoosh)"
-        />
-
-        <path
-          d="M119 275C160 264 197 245 227 218"
+          d="M284 639
+             C333 627 373 613 407 596"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="3.5"
+          strokeWidth="3"
           strokeLinecap="round"
-          strokeOpacity="0.46"
+          strokeOpacity="0.34"
         />
       </g>
     </svg>
@@ -300,11 +403,11 @@ const services: Service[] = [
     icon: ConsultationIcon,
   },
   {
-    title: "الفحوصات البصرية والماسحات",
-    description: "نتائج المسح البصري والتقارير المرتبطة بها.",
+    title: "التغذية العلاجية الذكية",
+    description: "خطط غذائية علاجية مخصصة ومتابعة صحية تناسب احتياجاتك.",
     href: "/main/scans",
-    badge: "نتائج دقيقة",
-    icon: HeartPulseIcon,
+    badge: "خطة مخصصة",
+    icon: NutritionIcon,
   },
   {
     title: "الإعدادات",
@@ -376,21 +479,6 @@ export default function HomePage() {
 
               </div>
 
-              <div className="mt-9 grid max-w-2xl grid-cols-3 gap-3">
-                {[
-                  ["5+", "فحوصات ذكية"],
-                  ["24/7", "مساعد صحي"],
-                  ["4", "خدمات متكاملة"],
-                ].map(([value, label]) => (
-                  <div
-                    key={label}
-                    className="stats-card rounded-2xl border border-[#0a86c7]/10 bg-white/80 p-3 text-center shadow-sm backdrop-blur"
-                  >
-                    <p className="text-xl font-bold text-[#0876d9] sm:text-2xl">{value}</p>
-                    <p className="mt-1 text-[11px] font-bold text-[#6790a8] sm:text-xs">{label}</p>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* الشعار المتحرك — مرسوم بالكامل بالكود */}
@@ -702,16 +790,22 @@ export default function HomePage() {
           animation: leafBreath 4.6s ease-in-out infinite;
         }
 
-        .stats-card {
-          animation: statsBreath 4s ease-in-out infinite;
+        .tibyan-head {
+          transform-box: fill-box;
+          transform-origin: center;
+          animation: headBreath 4.5s ease-in-out infinite;
         }
 
-        .stats-card:nth-child(2) {
-          animation-delay: .5s;
+        .tibyan-blue-arc {
+          transform-box: fill-box;
+          transform-origin: 50% 85%;
+          animation: blueArcBreath 4.8s ease-in-out infinite;
         }
 
-        .stats-card:nth-child(3) {
-          animation-delay: 1s;
+        .tibyan-leaf-vein {
+          stroke-dasharray: 150;
+          stroke-dashoffset: 0;
+          animation: leafVeinFlow 4.6s ease-in-out infinite;
         }
 
         .service-card {
@@ -842,9 +936,19 @@ export default function HomePage() {
           50% { transform: rotate(1.4deg) scale(1.018); }
         }
 
-        @keyframes statsBreath {
-          0%, 100% { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,.03); }
-          50% { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(8,118,217,.08); }
+        @keyframes headBreath {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-2px) scale(1.025); }
+        }
+
+        @keyframes blueArcBreath {
+          0%, 100% { transform: rotate(0deg) scale(1); }
+          50% { transform: rotate(-0.8deg) scale(1.012); }
+        }
+
+        @keyframes leafVeinFlow {
+          0%, 100% { stroke-dashoffset: 0; opacity: .92; }
+          50% { stroke-dashoffset: -28; opacity: 1; }
         }
 
         @keyframes cardEnter {
