@@ -32,7 +32,7 @@ type Destination = {
 
 const NavigationContext = createContext<NavigationContextValue | null>(null);
 
-const AUTH_ROUTES = ["/login", "/signup", "/register", "/forgot-password", "/reset-password"];
+const AUTH_ROUTES = ["/register", "/forgot-password", "/reset-password"];
 
 const AUTH_STORAGE_KEYS = [
   "token",
@@ -272,6 +272,8 @@ export function TibyanShell({ children }: { children: ReactNode }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
+  // إخفاء الشريط العلوي بالكامل في صفحتي الدخول وإنشاء الحساب
+  const hideTopBar = pathname.startsWith("/login") || pathname.startsWith("/signup");
 
   const clearTimers = useCallback(() => {
     timers.current.forEach((timer) => window.clearTimeout(timer));
@@ -369,142 +371,144 @@ export function TibyanShell({ children }: { children: ReactNode }) {
   return (
     <NavigationContext.Provider value={navigationValue}>
       <div dir="rtl" className="min-h-screen bg-[#f7fcff] text-[#073b72]">
-        <div className="tibyan-header-wrap sticky z-50">
-          <header className="tibyan-topbar">
-            <div className="tibyan-topbar-inner">
-              <button
-                type="button"
-                onClick={() => navigate("/", "الصفحة الرئيسية")}
-                className="tibyan-brand-button"
-                aria-label="العودة إلى الصفحة الرئيسية"
-              >
-                <span className="tibyan-brand-logo">
-                  <TibyanLogo className="h-full w-full overflow-visible" />
-                </span>
-                <span className="tibyan-brand-copy">
-                  <strong className="tibyan-brand-name">تبيان</strong>
-                  <span className="tibyan-brand-tagline">صحتك أوضح بذكاء</span>
-                </span>
-              </button>
-
-              {isAuthRoute ? (
-                <div className="tibyan-auth-area">
-                  <span className="tibyan-auth-title">
-                    {pathname === "/signup"
-                      ? "إنشاء حساب"
-                      : pathname === "/forgot-password"
-                        ? "استعادة الحساب"
-                        : pathname === "/reset-password"
-                          ? "إعادة تعيين كلمة المرور"
-                          : "تسجيل الدخول"}
+        {!hideTopBar && (
+          <div className="tibyan-header-wrap sticky z-50">
+            <header className="tibyan-topbar">
+              <div className="tibyan-topbar-inner">
+                <button
+                  type="button"
+                  onClick={() => navigate("/", "الصفحة الرئيسية")}
+                  className="tibyan-brand-button"
+                  aria-label="العودة إلى الصفحة الرئيسية"
+                >
+                  <span className="tibyan-brand-logo">
+                    <TibyanLogo className="h-full w-full overflow-visible" />
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => navigate("/", "الصفحة الرئيسية")}
-                    className="tibyan-action-button"
-                    aria-label="العودة إلى الصفحة الرئيسية"
-                    title="الرئيسية"
-                  >
-                    <BackIcon className="h-5 w-5" />
-                  </button>
-                </div>
-              ) : (
-                <div className="tibyan-top-actions">
-                  {pathname !== "/" && (
+                  <span className="tibyan-brand-copy">
+                    <strong className="tibyan-brand-name">تبيان</strong>
+                    <span className="tibyan-brand-tagline">صحتك أوضح بذكاء</span>
+                  </span>
+                </button>
+
+                {isAuthRoute ? (
+                  <div className="tibyan-auth-area">
+                    <span className="tibyan-auth-title">
+                      {pathname === "/signup"
+                        ? "إنشاء حساب"
+                        : pathname === "/forgot-password"
+                          ? "استعادة الحساب"
+                          : pathname === "/reset-password"
+                            ? "إعادة تعيين كلمة المرور"
+                            : "تسجيل الدخول"}
+                    </span>
                     <button
                       type="button"
-                      onClick={goBack}
+                      onClick={() => navigate("/", "الصفحة الرئيسية")}
                       className="tibyan-action-button"
-                      aria-label="الرجوع إلى الصفحة السابقة"
-                      title="رجوع"
+                      aria-label="العودة إلى الصفحة الرئيسية"
+                      title="الرئيسية"
                     >
                       <BackIcon className="h-5 w-5" />
                     </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => navigate("/ai", "المساعد الذكي")}
-                    className="ai-button tibyan-ai-button"
-                    aria-label="فتح المساعد الذكي"
-                    title="المساعد الذكي"
-                  >
-                    <AiIcon className="relative h-6 w-6" />
-                    <span className="tibyan-online-dot" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigate("/main/settings", "الإعدادات")}
-                    className="tibyan-action-button"
-                    aria-label="فتح الإعدادات"
-                    title="الإعدادات"
-                  >
-                    <SettingsIcon className="h-6 w-6" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLogoutOpen(true)}
-                    className="tibyan-logout-button"
-                    aria-label="تسجيل الخروج من الحساب"
-                    title="تسجيل الخروج"
-                  >
-                    <LogoutIcon className="h-5 w-5" />
-                    <span>خروج</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </header>
-
-          {!isAuthRoute && pathname !== "/" && (
-            <div className="tibyan-search-shell">
-              <div className="tibyan-search">
-                <SearchIcon className="tibyan-search-icon" />
-                <input
-                  value={query}
-                  onChange={(event) => {
-                    setQuery(event.target.value);
-                    setSearchOpen(true);
-                  }}
-                  onFocus={() => setSearchOpen(true)}
-                  onBlur={() => window.setTimeout(() => setSearchOpen(false), 160)}
-                  placeholder="ابحث عن فحص، دواء، تغذية أو استشارة..."
-                  aria-label="البحث داخل تبيان"
-                />
-                {searchOpen && (
-                  <div className="tibyan-search-results">
-                    {filteredResults.length > 0 ? (
-                      filteredResults.map((item) => (
-                        <button
-                          key={item.href}
-                          type="button"
-                          onMouseDown={(event) => event.preventDefault()}
-                          onClick={() => navigate(item.href, item.title)}
-                          className="tibyan-search-result"
-                        >
-                          <span className="tibyan-result-icon">
-                            <ResultIcon name={item.icon} />
-                          </span>
-                          <span className="min-w-0">
-                            <span className="block truncate text-sm font-black text-[#075dab]">
-                              {item.title}
-                            </span>
-                            <span className="mt-0.5 block truncate text-xs text-[#6b91a8]">
-                              {item.hint}
-                            </span>
-                          </span>
-                        </button>
-                      ))
-                    ) : (
-                      <p className="px-4 py-5 text-center text-sm font-semibold text-[#6b91a8]">
-                        لم نعثر على خدمة بهذا الاسم.
-                      </p>
+                  </div>
+                ) : (
+                  <div className="tibyan-top-actions">
+                    {pathname !== "/" && (
+                      <button
+                        type="button"
+                        onClick={goBack}
+                        className="tibyan-action-button"
+                        aria-label="الرجوع إلى الصفحة السابقة"
+                        title="رجوع"
+                      >
+                        <BackIcon className="h-5 w-5" />
+                      </button>
                     )}
+                    <button
+                      type="button"
+                      onClick={() => navigate("/ai", "المساعد الذكي")}
+                      className="ai-button tibyan-ai-button"
+                      aria-label="فتح المساعد الذكي"
+                      title="المساعد الذكي"
+                    >
+                      <AiIcon className="relative h-6 w-6" />
+                      <span className="tibyan-online-dot" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate("/main/settings", "الإعدادات")}
+                      className="tibyan-action-button"
+                      aria-label="فتح الإعدادات"
+                      title="الإعدادات"
+                    >
+                      <SettingsIcon className="h-6 w-6" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLogoutOpen(true)}
+                      className="tibyan-logout-button"
+                      aria-label="تسجيل الخروج من الحساب"
+                      title="تسجيل الخروج"
+                    >
+                      <LogoutIcon className="h-5 w-5" />
+                      <span>خروج</span>
+                    </button>
                   </div>
                 )}
               </div>
-            </div>
-          )}
-        </div>
+            </header>
+
+            {!isAuthRoute && pathname !== "/" && (
+              <div className="tibyan-search-shell">
+                <div className="tibyan-search">
+                  <SearchIcon className="tibyan-search-icon" />
+                  <input
+                    value={query}
+                    onChange={(event) => {
+                      setQuery(event.target.value);
+                      setSearchOpen(true);
+                    }}
+                    onFocus={() => setSearchOpen(true)}
+                    onBlur={() => window.setTimeout(() => setSearchOpen(false), 160)}
+                    placeholder="ابحث عن فحص، دواء، تغذية أو استشارة..."
+                    aria-label="البحث داخل تبيان"
+                  />
+                  {searchOpen && (
+                    <div className="tibyan-search-results">
+                      {filteredResults.length > 0 ? (
+                        filteredResults.map((item) => (
+                          <button
+                            key={item.href}
+                            type="button"
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => navigate(item.href, item.title)}
+                            className="tibyan-search-result"
+                          >
+                            <span className="tibyan-result-icon">
+                              <ResultIcon name={item.icon} />
+                            </span>
+                            <span className="min-w-0">
+                              <span className="block truncate text-sm font-black text-[#075dab]">
+                                {item.title}
+                              </span>
+                              <span className="mt-0.5 block truncate text-xs text-[#6b91a8]">
+                                {item.hint}
+                              </span>
+                            </span>
+                          </button>
+                        ))
+                      ) : (
+                        <p className="px-4 py-5 text-center text-sm font-semibold text-[#6b91a8]">
+                          لم نعثر على خدمة بهذا الاسم.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {children}
       </div>
