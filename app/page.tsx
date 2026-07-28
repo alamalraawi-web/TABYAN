@@ -3,6 +3,8 @@
 import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import { useTibyanNavigation } from "../components/tibyan-shell";
 import type { ComponentType, SVGProps } from "react";
+import { useCallback, memo, useMemo, startTransition } from "react";
+import { useRouter } from "next/navigation";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -22,7 +24,7 @@ type Service = {
   icon: ComponentType<IconProps>;
 };
 
-
+// ----- الأيقونات الثابتة -----
 function AiIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
@@ -31,7 +33,6 @@ function AiIcon(props: IconProps) {
     </svg>
   );
 }
-
 
 function ArrowIcon(props: IconProps) {
   return (
@@ -86,7 +87,6 @@ function HeartPulseIcon(props: IconProps) {
   );
 }
 
-
 function StethoscopeIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...props}>
@@ -106,12 +106,8 @@ function ClipboardIcon(props: IconProps) {
   );
 }
 
-
-/**
- * شعار تبيان مرسوم بالكامل داخل الكود بصيغة SVG.
- * تمت إعادة رسمه وفق الصورة المرجعية الجديدة، من دون استخدام أي ملف صورة.
- */
-function TibyanLogo({ className }: { className?: string }) {
+// ----- شعار تبيان (معزول بـ memo) -----
+const TibyanLogo = memo(function TibyanLogo({ className }: { className?: string }) {
   return (
     <svg
       viewBox="70 180 520 520"
@@ -225,7 +221,6 @@ function TibyanLogo({ className }: { className?: string }) {
       </defs>
 
       <g filter="url(#tibyan-logo-shadow)">
-        {/* الصليب الطبي والجسم الأزرق في كتلة واحدة */}
         <path
           d="M398 205
              L319 201 L267 201
@@ -260,7 +255,6 @@ function TibyanLogo({ className }: { className?: string }) {
           clipRule="evenodd"
         />
 
-        {/* لمعان علوي ناعم مطابق لطابع الصورة */}
         <path
           d="M398 205
              L319 201 L267 201
@@ -273,7 +267,6 @@ function TibyanLogo({ className }: { className?: string }) {
           fill="url(#tibyan-main-shine)"
         />
 
-        {/* نبض القلب المتحرك */}
         <path
           className="tibyan-heartbeat"
           d="M87 436
@@ -292,7 +285,6 @@ function TibyanLogo({ className }: { className?: string }) {
           filter="url(#tibyan-pulse-glow)"
         />
 
-        {/* الرأس الأبيض */}
         <circle
           className="tibyan-head"
           cx="388"
@@ -301,7 +293,6 @@ function TibyanLogo({ className }: { className?: string }) {
           fill="url(#tibyan-head-gradient)"
         />
 
-        {/* القوس الأزرق الطويل */}
         <path
           className="tibyan-blue-arc"
           d="M535 287
@@ -314,7 +305,6 @@ function TibyanLogo({ className }: { className?: string }) {
           fill="url(#tibyan-blue-swoosh)"
         />
 
-        {/* الورقة والقوس السفلي الأخضر */}
         <path
           className="tibyan-leaf"
           d="M529 333
@@ -337,7 +327,6 @@ function TibyanLogo({ className }: { className?: string }) {
           fill="url(#tibyan-green-gradient)"
         />
 
-        {/* الفاصل الأبيض داخل الورقة */}
         <path
           className="tibyan-leaf-vein"
           d="M505 448
@@ -349,7 +338,6 @@ function TibyanLogo({ className }: { className?: string }) {
           strokeLinecap="round"
         />
 
-        {/* لمعان رفيع في الذيل السفلي */}
         <path
           d="M284 639
              C333 627 373 613 407 596"
@@ -362,9 +350,10 @@ function TibyanLogo({ className }: { className?: string }) {
       </g>
     </svg>
   );
-}
+});
 
-const orbitIcons = [
+// ----- البيانات الثابتة -----
+const ORBIT_ICONS = [
   { Icon: HeartPulseIcon, color: "#0876d9" },
   { Icon: StethoscopeIcon, color: "#08a6b9" },
   { Icon: ClipboardIcon, color: "#116dcc" },
@@ -373,7 +362,7 @@ const orbitIcons = [
   { Icon: ConsultationIcon, color: "#35bd70" },
 ];
 
-const services: Service[] = [
+const SERVICES: Service[] = [
   {
     title: "الفحوصات والمختبرات",
     description: "فحوصات ومختبرات متكاملة لعرض النتائج وإدارتها.",
@@ -418,16 +407,278 @@ const services: Service[] = [
   },
 ];
 
+// ----- المكونات الفرعية (مع memo وتحسين prefetch) -----
 
+type NavigateFn = (href: string, title: string) => void;
+
+const HeroSection = memo(function HeroSection({
+  navigate,
+  prefetch,
+}: {
+  navigate: NavigateFn;
+  prefetch: (href: string) => void;
+}) {
+  return (
+    <section className="hero-shell relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/75 px-5 py-8 shadow-[0_35px_100px_rgba(4,70,127,0.12)] backdrop-blur-xl sm:px-9 sm:py-11 lg:px-12 lg:py-14">
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="hero-scan absolute inset-y-0 w-28 bg-gradient-to-r from-transparent via-[#12b7bd]/10 to-transparent" />
+        <div className="absolute -left-16 -top-16 h-56 w-56 rounded-full border-[32px] border-[#0876d9]/5" />
+        <div className="absolute -bottom-24 right-[35%] h-64 w-64 rounded-full border-[38px] border-[#35c86f]/5" />
+      </div>
+
+      <div className="relative grid items-center gap-10 lg:grid-cols-[1.05fr_.95fr]">
+        <div>
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#12b7bd]/20 bg-[#eafafa] px-4 py-2 text-xs font-bold text-[#078c96] shadow-sm">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#38c96f] opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#38c96f]" />
+            </span>
+            منصة طبية هندسية مدعومة بالذكاء الاصطناعي
+          </div>
+
+          <h1 className="max-w-3xl text-4xl font-bold leading-[1.25] text-[#064c91] sm:text-5xl lg:text-6xl">
+            صحتك أوضح مع
+            <span className="relative mx-3 inline-block bg-gradient-to-l from-[#0876d9] via-[#0eabb8] to-[#36c96f] bg-clip-text text-transparent">
+              تبيان
+              <span className="absolute -bottom-2 right-0 h-1.5 w-full origin-right rounded-full bg-gradient-to-l from-[#0876d9] via-[#12b7bd] to-[#38c96f] hero-underline" />
+            </span>
+          </h1>
+
+          <p className="mt-6 max-w-2xl text-base font-medium leading-8 text-[#4e7894] sm:text-lg">
+            منظومة تجمع الطب والهندسة في تجربة واحدة؛ من الفحوصات البصرية والمختبرات إلى التغذية العلاجية والصيدلية الذكية والاستشارات الطبية.
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => navigate("/main/labs", "الفحوصات والمختبرات")}
+              onMouseEnter={() => prefetch("/main/labs")}
+              className="group inline-flex min-h-12 items-center gap-3 rounded-2xl bg-gradient-to-l from-[#0876d9] to-[#0caab8] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_35px_rgba(8,118,217,0.28)] transition hover:-translate-y-1 hover:shadow-[0_22px_45px_rgba(8,118,217,0.35)] focus:outline-none focus:ring-4 focus:ring-[#0876d9]/20"
+            >
+              ابدأ رحلتك الصحية
+              <ArrowIcon className="h-5 w-5 transition group-hover:-translate-x-1" />
+            </button>
+          </div>
+        </div>
+
+        <div className="tibyan-logo-stage relative mx-auto grid min-h-[360px] w-full max-w-[470px] place-items-center sm:min-h-[430px]">
+          <div className="orbit-canvas pointer-events-none absolute h-[340px] w-[340px] sm:h-[420px] sm:w-[420px]" aria-hidden="true">
+            <div className="engineering-ring absolute inset-0 rounded-full border border-dashed border-[#0a86c7]/25" />
+            <div className="engineering-ring reverse absolute inset-[30px] rounded-full border border-[#12b7bd]/20 sm:inset-[38px]" />
+            <div className="orbit-energy-ring absolute inset-[66px] rounded-full border border-[#35c86f]/15 sm:inset-[78px]" />
+
+            {ORBIT_ICONS.map(({ Icon, color }, index) => {
+              const angle = index * 60;
+
+              return (
+                <div
+                  key={index}
+                  className="orbit-slot absolute inset-0"
+                  style={{ transform: `rotate(${angle}deg)` }}
+                >
+                  <div className="orbit-runner absolute inset-0">
+                    <div className="orbit-anchor absolute left-1/2 top-1/2">
+                      <div style={{ transform: `rotate(${-angle}deg)` }}>
+                        <div className="orbit-counter">
+                          <div
+                            className="orbit-badge grid place-items-center rounded-2xl border border-white/90 bg-white/95 backdrop-blur-md"
+                            style={{ color }}
+                          >
+                            <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="logo-aura pointer-events-none absolute h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(18,183,189,0.20)_0%,rgba(8,118,217,0.10)_46%,transparent_72%)] blur-xl sm:h-80 sm:w-80" aria-hidden="true" />
+
+          <div className="logo-core relative z-10 h-56 w-56 sm:h-72 sm:w-72">
+            <TibyanLogo className="h-full w-full overflow-visible" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+});
+
+const DailyTipSection = memo(function DailyTipSection() {
+  return (
+    <section className="mt-6 overflow-hidden rounded-3xl border border-[#34c76e]/20 bg-gradient-to-l from-[#effdf4] via-white to-[#eefbff] p-5 shadow-[0_18px_50px_rgba(3,87,135,0.08)] sm:p-6">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div className="flex items-start gap-4">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-[#38c96f] to-[#11b4ae] text-2xl text-white shadow-[0_12px_28px_rgba(56,201,111,0.28)]">
+            ✦
+          </span>
+          <div>
+            <p className="text-xs font-semibold tracking-normal text-[#18a95d]">نصيحة تبيان اليومية</p>
+            <p className="mt-1 text-sm font-bold leading-7 text-[#365f79] sm:text-base">
+              احتفظ بنتائج فحوصاتك السابقة؛ المقارنة الزمنية تساعد الطبيب على فهم التغيّرات بدقة أكبر.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold text-[#078c96] shadow-sm ring-1 ring-[#12b7bd]/10">
+          <span className="h-2 w-2 rounded-full bg-[#38c96f]" />
+          معلومة موثوقة
+        </div>
+      </div>
+    </section>
+  );
+});
+
+const ServiceCard = memo(function ServiceCard({
+  service,
+  index,
+  navigate,
+  prefetch,
+}: {
+  service: Service;
+  index: number;
+  navigate: NavigateFn;
+  prefetch: (href: string) => void;
+}) {
+  const Icon = service.icon;
+  return (
+    <button
+      type="button"
+      onClick={() => navigate(service.href, service.title)}
+      onMouseEnter={() => prefetch(service.href)}
+      style={{ animationDelay: `${index * 120}ms` }}
+      className="service-card group relative min-h-[220px] overflow-hidden rounded-[1.75rem] border border-[#0a86c7]/10 bg-white p-6 text-right shadow-[0_20px_55px_rgba(3,77,132,0.09)] transition duration-500 hover:-translate-y-2 hover:border-[#10b6b8]/35 hover:shadow-[0_30px_75px_rgba(3,88,147,0.17)] focus:outline-none focus:ring-4 focus:ring-[#12b7bd]/15 sm:p-7"
+    >
+      <span className="card-light pointer-events-none absolute -left-20 -top-20 h-56 w-56 rounded-full bg-[#0876d9]/[0.08] blur-2xl transition duration-700 group-hover:translate-x-10 group-hover:translate-y-12" />
+      <span className="pointer-events-none absolute -bottom-16 -right-16 h-44 w-44 rounded-full bg-[#38c96f]/10 blur-2xl transition duration-700 group-hover:-translate-x-8 group-hover:-translate-y-8" />
+
+      <div className="relative flex h-full flex-col">
+        <div className="flex items-start justify-between gap-4">
+          <span className="grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-[#0876d9] via-[#0b9fc3] to-[#16b8ad] text-white shadow-[0_16px_35px_rgba(8,118,217,0.24)] transition duration-500 group-hover:-rotate-6 group-hover:scale-110">
+            <Icon className="h-8 w-8" />
+          </span>
+          <span className="rounded-full border border-[#10b6b8]/15 bg-[#effcfc] px-3 py-1.5 text-[11px] font-bold text-[#0b979b]">
+            {service.badge}
+          </span>
+        </div>
+
+        <h3 className="mt-6 text-xl font-bold text-[#075dab] sm:text-2xl">{service.title}</h3>
+        <p className="mt-3 max-w-xl text-sm font-medium leading-7 text-[#658ba3]">
+          {service.description}
+        </p>
+
+        <span className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-bold text-[#0a98a1]">
+          فتح الخدمة
+          <ArrowIcon className="h-5 w-5 transition duration-300 group-hover:-translate-x-2" />
+        </span>
+      </div>
+    </button>
+  );
+});
+
+const ServicesGrid = memo(function ServicesGrid({
+  navigate,
+  prefetch,
+}: {
+  navigate: NavigateFn;
+  prefetch: (href: string) => void;
+}) {
+  return (
+    <section className="mt-12">
+      <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-sm font-bold text-[#10a4a9]">منظومة تبيان</p>
+          <h2 className="mt-2 text-2xl font-bold text-[#064c91] sm:text-3xl">كل ما تحتاجه لصحة أوضح</h2>
+        </div>
+        <p className="max-w-xl text-sm font-medium leading-7 text-[#6a8fa7]">
+          اختر الخدمة، وستظهر حركة الشعار قبل انتقالك إلى الصفحة المطلوبة.
+        </p>
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2">
+        {SERVICES.map((service, index) => (
+          <ServiceCard
+            key={service.href}
+            service={service}
+            index={index}
+            navigate={navigate}
+            prefetch={prefetch}
+          />
+        ))}
+      </div>
+    </section>
+  );
+});
+
+const WorkflowSection = memo(function WorkflowSection() {
+  const steps = [
+    ["01", "اختر الخدمة"],
+    ["02", "أدخل البيانات"],
+    ["03", "استلم التوجيه"],
+  ];
+  return (
+    <section className="mt-12 rounded-[2rem] border border-[#0a86c7]/10 bg-gradient-to-l from-[#064f97] via-[#0876d9] to-[#0aa7b7] p-6 text-white shadow-[0_30px_80px_rgba(4,85,151,0.22)] sm:p-9">
+      <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
+        <div>
+          <p className="text-sm font-bold text-[#a9fff0]">هندسة التجربة الصحية</p>
+          <h2 className="mt-2 text-2xl font-bold sm:text-3xl">من السؤال إلى القرار في خطوات واضحة</h2>
+          <p className="mt-4 text-sm font-medium leading-7 text-white/75">
+            صُممت رحلة المستخدم لتكون سريعة، منظمة، وقابلة للتطوير عند ربط الذكاء الاصطناعي وقواعد البيانات لاحقاً.
+          </p>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-3">
+          {steps.map(([number, label]) => (
+            <div key={number} className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-md">
+              <span className="text-2xl font-bold text-[#a9fff0]">{number}</span>
+              <p className="mt-4 text-sm font-bold">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+const PageFooter = memo(function PageFooter() {
+  return (
+    <footer className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-[#0a86c7]/10 py-6 text-center text-xs font-semibold text-[#7194aa] sm:flex-row sm:text-right">
+      <p>© تبيان — منصة تجمع الطب والهندسة بذكاء.</p>
+      <p>الواجهة للإرشاد التقني ولا تُعد تشخيصاً طبياً.</p>
+    </footer>
+  );
+});
+
+// ----- المكون الرئيسي للصفحة -----
 export default function HomePage() {
   const { navigate } = useTibyanNavigation();
+  const router = useRouter();
+
+  // تثبيت دالة التنقل مع startTransition لسلاسة أكبر
+  const handleNavigate = useCallback(
+    (href: string, title: string) => {
+      startTransition(() => {
+        navigate(href, title);
+      });
+    },
+    [navigate]
+  );
+
+  // دالة التحميل المسبق (prefetch) باستخدام router
+  const prefetch = useCallback(
+    (href: string) => {
+      router.prefetch(href);
+    },
+    [router]
+  );
 
   return (
     <main
       dir="rtl"
       className={`${tibyanFont.variable} tibyan-page min-h-screen overflow-x-hidden bg-[#f7fcff] text-[#073b72]`}
     >
-      {/* خلفية هندسية طبية */}
+      {/* خلفية هندسية طبية (محسّنة) */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
         <div className="medical-grid absolute inset-0 opacity-60" />
         <div className="absolute -right-28 top-28 h-80 w-80 rounded-full bg-[#12b7bd]/15 blur-3xl" />
@@ -435,201 +686,15 @@ export default function HomePage() {
         <div className="absolute bottom-[-8rem] right-[20%] h-80 w-80 rounded-full bg-[#38c96f]/15 blur-3xl" />
       </div>
 
-
       <div className="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-        {/* القسم الرئيسي */}
-        <section className="hero-shell relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/75 px-5 py-8 shadow-[0_35px_100px_rgba(4,70,127,0.12)] backdrop-blur-xl sm:px-9 sm:py-11 lg:px-12 lg:py-14">
-          <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-            <div className="hero-scan absolute inset-y-0 w-28 bg-gradient-to-r from-transparent via-[#12b7bd]/10 to-transparent" />
-            <div className="absolute -left-16 -top-16 h-56 w-56 rounded-full border-[32px] border-[#0876d9]/5" />
-            <div className="absolute -bottom-24 right-[35%] h-64 w-64 rounded-full border-[38px] border-[#35c86f]/5" />
-          </div>
-
-          <div className="relative grid items-center gap-10 lg:grid-cols-[1.05fr_.95fr]">
-            <div>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#12b7bd]/20 bg-[#eafafa] px-4 py-2 text-xs font-bold text-[#078c96] shadow-sm">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#38c96f] opacity-75" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#38c96f]" />
-                </span>
-                منصة طبية هندسية مدعومة بالذكاء الاصطناعي
-              </div>
-
-              <h1 className="max-w-3xl text-4xl font-bold leading-[1.25] text-[#064c91] sm:text-5xl lg:text-6xl">
-                صحتك أوضح مع
-                <span className="relative mx-3 inline-block bg-gradient-to-l from-[#0876d9] via-[#0eabb8] to-[#36c96f] bg-clip-text text-transparent">
-                  تبيان
-                  <span className="absolute -bottom-2 right-0 h-1.5 w-full origin-right rounded-full bg-gradient-to-l from-[#0876d9] via-[#12b7bd] to-[#38c96f] hero-underline" />
-                </span>
-              </h1>
-
-              <p className="mt-6 max-w-2xl text-base font-medium leading-8 text-[#4e7894] sm:text-lg">
-                منظومة تجمع الطب والهندسة في تجربة واحدة؛ من الفحوصات البصرية والمختبرات إلى التغذية العلاجية والصيدلية الذكية والاستشارات الطبية.
-              </p>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => navigate("/main/labs", "الفحوصات والمختبرات")}
-                  className="group inline-flex min-h-12 items-center gap-3 rounded-2xl bg-gradient-to-l from-[#0876d9] to-[#0caab8] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_35px_rgba(8,118,217,0.28)] transition hover:-translate-y-1 hover:shadow-[0_22px_45px_rgba(8,118,217,0.35)] focus:outline-none focus:ring-4 focus:ring-[#0876d9]/20"
-                >
-                  ابدأ رحلتك الصحية
-                  <ArrowIcon className="h-5 w-5 transition group-hover:-translate-x-1" />
-                </button>
-
-              </div>
-
-            </div>
-
-            {/* الشعار المتحرك — مرسوم بالكامل بالكود */}
-            <div className="tibyan-logo-stage relative mx-auto grid min-h-[360px] w-full max-w-[470px] place-items-center sm:min-h-[430px]">
-              <div className="orbit-canvas pointer-events-none absolute h-[340px] w-[340px] sm:h-[420px] sm:w-[420px]" aria-hidden="true">
-                <div className="engineering-ring absolute inset-0 rounded-full border border-dashed border-[#0a86c7]/25" />
-                <div className="engineering-ring reverse absolute inset-[30px] rounded-full border border-[#12b7bd]/20 sm:inset-[38px]" />
-                <div className="orbit-energy-ring absolute inset-[66px] rounded-full border border-[#35c86f]/15 sm:inset-[78px]" />
-
-                {orbitIcons.map(({ Icon, color }, index) => {
-                  const angle = index * 60;
-
-                  return (
-                    <div
-                      key={index}
-                      className="orbit-slot absolute inset-0"
-                      style={{ transform: `rotate(${angle}deg)` }}
-                    >
-                      <div className="orbit-runner absolute inset-0">
-                        <div className="orbit-anchor absolute left-1/2 top-1/2">
-                          <div style={{ transform: `rotate(${-angle}deg)` }}>
-                            <div className="orbit-counter">
-                              <div
-                                className="orbit-badge grid place-items-center rounded-2xl border border-white/90 bg-white/95 backdrop-blur-md"
-                                style={{ color }}
-                              >
-                                <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="logo-aura pointer-events-none absolute h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(18,183,189,0.20)_0%,rgba(8,118,217,0.10)_46%,transparent_72%)] blur-xl sm:h-80 sm:w-80" aria-hidden="true" />
-
-              <div className="logo-core relative z-10 h-56 w-56 sm:h-72 sm:w-72">
-                <TibyanLogo className="h-full w-full overflow-visible" />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* نصيحة اليوم */}
-        <section className="mt-6 overflow-hidden rounded-3xl border border-[#34c76e]/20 bg-gradient-to-l from-[#effdf4] via-white to-[#eefbff] p-5 shadow-[0_18px_50px_rgba(3,87,135,0.08)] sm:p-6">
-          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-            <div className="flex items-start gap-4">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-[#38c96f] to-[#11b4ae] text-2xl text-white shadow-[0_12px_28px_rgba(56,201,111,0.28)]">
-                ✦
-              </span>
-              <div>
-                <p className="text-xs font-semibold tracking-normal text-[#18a95d]">نصيحة تبيان اليومية</p>
-                <p className="mt-1 text-sm font-bold leading-7 text-[#365f79] sm:text-base">
-                  احتفظ بنتائج فحوصاتك السابقة؛ المقارنة الزمنية تساعد الطبيب على فهم التغيّرات بدقة أكبر.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold text-[#078c96] shadow-sm ring-1 ring-[#12b7bd]/10">
-              <span className="h-2 w-2 rounded-full bg-[#38c96f]" />
-              معلومة موثوقة
-            </div>
-          </div>
-        </section>
-
-        {/* الخدمات */}
-        <section className="mt-12">
-          <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-sm font-bold text-[#10a4a9]">منظومة تبيان</p>
-              <h2 className="mt-2 text-2xl font-bold text-[#064c91] sm:text-3xl">كل ما تحتاجه لصحة أوضح</h2>
-            </div>
-            <p className="max-w-xl text-sm font-medium leading-7 text-[#6a8fa7]">
-              اختر الخدمة، وستظهر حركة الشعار قبل انتقالك إلى الصفحة المطلوبة.
-            </p>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-2">
-            {services.map((service, index) => {
-              const Icon = service.icon;
-              return (
-                <button
-                  key={service.href}
-                  type="button"
-                  onClick={() => navigate(service.href, service.title)}
-                  style={{ animationDelay: `${index * 120}ms` }}
-                  className="service-card group relative min-h-[220px] overflow-hidden rounded-[1.75rem] border border-[#0a86c7]/10 bg-white p-6 text-right shadow-[0_20px_55px_rgba(3,77,132,0.09)] transition duration-500 hover:-translate-y-2 hover:border-[#10b6b8]/35 hover:shadow-[0_30px_75px_rgba(3,88,147,0.17)] focus:outline-none focus:ring-4 focus:ring-[#12b7bd]/15 sm:p-7"
-                >
-                  <span className="card-light pointer-events-none absolute -left-20 -top-20 h-56 w-56 rounded-full bg-[#0876d9]/[0.08] blur-2xl transition duration-700 group-hover:translate-x-10 group-hover:translate-y-12" />
-                  <span className="pointer-events-none absolute -bottom-16 -right-16 h-44 w-44 rounded-full bg-[#38c96f]/10 blur-2xl transition duration-700 group-hover:-translate-x-8 group-hover:-translate-y-8" />
-
-                  <div className="relative flex h-full flex-col">
-                    <div className="flex items-start justify-between gap-4">
-                      <span className="grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-[#0876d9] via-[#0b9fc3] to-[#16b8ad] text-white shadow-[0_16px_35px_rgba(8,118,217,0.24)] transition duration-500 group-hover:-rotate-6 group-hover:scale-110">
-                        <Icon className="h-8 w-8" />
-                      </span>
-                      <span className="rounded-full border border-[#10b6b8]/15 bg-[#effcfc] px-3 py-1.5 text-[11px] font-bold text-[#0b979b]">
-                        {service.badge}
-                      </span>
-                    </div>
-
-                    <h3 className="mt-6 text-xl font-bold text-[#075dab] sm:text-2xl">{service.title}</h3>
-                    <p className="mt-3 max-w-xl text-sm font-medium leading-7 text-[#658ba3]">
-                      {service.description}
-                    </p>
-
-                    <span className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-bold text-[#0a98a1]">
-                      فتح الخدمة
-                      <ArrowIcon className="h-5 w-5 transition duration-300 group-hover:-translate-x-2" />
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* مسار العمل */}
-        <section className="mt-12 rounded-[2rem] border border-[#0a86c7]/10 bg-gradient-to-l from-[#064f97] via-[#0876d9] to-[#0aa7b7] p-6 text-white shadow-[0_30px_80px_rgba(4,85,151,0.22)] sm:p-9">
-          <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
-            <div>
-              <p className="text-sm font-bold text-[#a9fff0]">هندسة التجربة الصحية</p>
-              <h2 className="mt-2 text-2xl font-bold sm:text-3xl">من السؤال إلى القرار في خطوات واضحة</h2>
-              <p className="mt-4 text-sm font-medium leading-7 text-white/75">
-                صُممت رحلة المستخدم لتكون سريعة، منظمة، وقابلة للتطوير عند ربط الذكاء الاصطناعي وقواعد البيانات لاحقاً.
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                ["01", "اختر الخدمة"],
-                ["02", "أدخل البيانات"],
-                ["03", "استلم التوجيه"],
-              ].map(([number, label]) => (
-                <div key={number} className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-md">
-                  <span className="text-2xl font-bold text-[#a9fff0]">{number}</span>
-                  <p className="mt-4 text-sm font-bold">{label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <footer className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-[#0a86c7]/10 py-6 text-center text-xs font-semibold text-[#7194aa] sm:flex-row sm:text-right">
-          <p>© تبيان — منصة تجمع الطب والهندسة بذكاء.</p>
-          <p>الواجهة للإرشاد التقني ولا تُعد تشخيصاً طبياً.</p>
-        </footer>
+        <HeroSection navigate={handleNavigate} prefetch={prefetch} />
+        <DailyTipSection />
+        <ServicesGrid navigate={handleNavigate} prefetch={prefetch} />
+        <WorkflowSection />
+        <PageFooter />
       </div>
 
+      {/* أنماط CSS المحسّنة مع تركيز على transform و will-change */}
       <style jsx global>{`
         * {
           box-sizing: border-box;
@@ -643,7 +708,6 @@ export default function HomePage() {
           margin: 0;
           background: #f7fcff;
         }
-
 
         .tibyan-page,
         .tibyan-page button,
@@ -664,15 +728,18 @@ export default function HomePage() {
           letter-spacing: 0;
         }
 
-        .medical-grid,
-        .transition-grid {
+        .medical-grid {
           background-image:
             linear-gradient(rgba(8, 118, 217, 0.045) 1px, transparent 1px),
             linear-gradient(90deg, rgba(8, 118, 217, 0.045) 1px, transparent 1px);
           background-size: 42px 42px;
           animation: gridMove 18s linear infinite;
+          will-change: background-position;
         }
 
+        .hero-shell {
+          contain: layout style paint;
+        }
         .hero-shell::after {
           content: "";
           position: absolute;
@@ -682,19 +749,24 @@ export default function HomePage() {
           background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,.48) 45%, transparent 70%);
           transform: translateX(110%);
           animation: softShine 7s ease-in-out infinite;
+          will-change: transform;
         }
 
         .hero-scan {
           animation: heroScan 6.5s ease-in-out infinite;
+          will-change: transform, opacity;
         }
 
         .hero-underline {
           animation: underlinePulse 2.8s ease-in-out infinite;
+          will-change: transform, opacity;
         }
 
         .engineering-ring {
           animation: slowSpin 18s linear infinite;
           box-shadow: 0 0 50px rgba(18, 183, 189, 0.08);
+          will-change: transform;
+          contain: layout style paint;
         }
 
         .engineering-ring.reverse {
@@ -705,16 +777,19 @@ export default function HomePage() {
         .tibyan-logo-stage {
           --orbit-radius: 142px;
           isolation: isolate;
+          contain: layout style paint;
         }
 
         .logo-core {
           animation: logoFloat 4.5s ease-in-out infinite;
           filter: drop-shadow(0 28px 32px rgba(3, 82, 143, 0.2));
           transform-origin: 50% 55%;
+          will-change: transform;
         }
 
         .logo-aura {
           animation: logoAura 4.8s ease-in-out infinite;
+          will-change: transform, opacity;
         }
 
         .orbit-energy-ring {
@@ -722,6 +797,7 @@ export default function HomePage() {
             0 0 45px rgba(18, 183, 189, 0.08),
             inset 0 0 35px rgba(56, 201, 111, 0.04);
           animation: orbitEnergy 4s ease-in-out infinite;
+          will-change: transform, opacity;
         }
 
         .orbit-runner {
@@ -747,28 +823,24 @@ export default function HomePage() {
             0 0 0 5px rgba(255, 255, 255, 0.32),
             inset 0 1px 0 rgba(255, 255, 255, 0.9);
           animation: orbitBadgeBreath 3.8s ease-in-out infinite;
+          will-change: transform;
         }
 
         .orbit-slot:nth-child(5) .orbit-badge {
           animation-delay: .35s;
         }
-
         .orbit-slot:nth-child(6) .orbit-badge {
           animation-delay: .7s;
         }
-
         .orbit-slot:nth-child(7) .orbit-badge {
           animation-delay: 1.05s;
         }
-
         .orbit-slot:nth-child(8) .orbit-badge {
           animation-delay: 1.4s;
         }
-
         .orbit-slot:nth-child(9) .orbit-badge {
           animation-delay: 1.75s;
         }
-
         .orbit-slot:nth-child(10) .orbit-badge {
           animation-delay: 2.1s;
         }
@@ -782,34 +854,40 @@ export default function HomePage() {
           stroke-dasharray: 260;
           stroke-dashoffset: 260;
           animation: heartbeatTrace 4.2s ease-in-out infinite;
+          will-change: stroke-dashoffset, opacity;
         }
 
         .tibyan-leaf {
           transform-box: fill-box;
           transform-origin: 50% 80%;
           animation: leafBreath 4.6s ease-in-out infinite;
+          will-change: transform;
         }
 
         .tibyan-head {
           transform-box: fill-box;
           transform-origin: center;
           animation: headBreath 4.5s ease-in-out infinite;
+          will-change: transform;
         }
 
         .tibyan-blue-arc {
           transform-box: fill-box;
           transform-origin: 50% 85%;
           animation: blueArcBreath 4.8s ease-in-out infinite;
+          will-change: transform;
         }
 
         .tibyan-leaf-vein {
           stroke-dasharray: 150;
           stroke-dashoffset: 0;
           animation: leafVeinFlow 4.6s ease-in-out infinite;
+          will-change: stroke-dashoffset, opacity;
         }
 
         .service-card {
           animation: cardEnter .75s both;
+          contain: layout style paint;
         }
 
         .service-card::after {
@@ -822,6 +900,8 @@ export default function HomePage() {
           transform: rotate(18deg);
           background: linear-gradient(to right, transparent, rgba(255,255,255,.72), transparent);
           transition: transform .85s ease;
+          pointer-events: none;
+          will-change: transform;
         }
 
         .service-card:hover::after {
@@ -856,7 +936,6 @@ export default function HomePage() {
         .transition-ring {
           animation: fastSpin 2.2s linear infinite;
         }
-
         .transition-ring.reverse {
           animation-direction: reverse;
           animation-duration: 1.7s;
@@ -900,7 +979,6 @@ export default function HomePage() {
           0%, 100% { transform: translateY(0) rotate(0deg); }
           50% { transform: translateY(-12px) rotate(1.5deg); }
         }
-
 
         @keyframes logoAura {
           0%, 100% { opacity: .58; transform: scale(.92); }
@@ -1001,7 +1079,6 @@ export default function HomePage() {
           .tibyan-logo-stage {
             --orbit-radius: 180px;
           }
-
           .orbit-badge {
             width: 64px;
             height: 64px;
