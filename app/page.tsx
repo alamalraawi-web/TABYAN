@@ -3,7 +3,15 @@
 import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import { useTibyanNavigation } from "../components/tibyan-shell";
 import type { ComponentType, SVGProps } from "react";
-import { useCallback, memo, useMemo, startTransition } from "react";
+import {
+  useCallback,
+  memo,
+  useMemo,
+  startTransition,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
 
 type IconProps = SVGProps<SVGSVGElement>;
@@ -24,7 +32,7 @@ type Service = {
   icon: ComponentType<IconProps>;
 };
 
-// ----- الأيقونات الثابتة -----
+// ----- الأيقونات الثابتة (بدون تغيير) -----
 function AiIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
@@ -106,16 +114,41 @@ function ClipboardIcon(props: IconProps) {
   );
 }
 
-// ----- شعار تبيان (معزول بـ memo) -----
+// ----- شعار تبيان (مُعاد هيكلته ليكون سلساً) -----
 const TibyanLogo = memo(function TibyanLogo({ className }: { className?: string }) {
+  // مرجع لتتبع حالة الرؤية
+  const containerRef = useRef<SVGSVGElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // إيقاف/تشغيل الحركات بناءً على رؤية الشعار
+        setIsVisible(entry.isIntersecting);
+        // تطبيق pause على العناصر المتحركة عبر CSS
+        if (entry.isIntersecting) {
+          containerRef.current?.classList.remove("logo-paused");
+        } else {
+          containerRef.current?.classList.add("logo-paused");
+        }
+      },
+      { threshold: 0.1, rootMargin: "50px" }
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <svg
+      ref={containerRef}
       viewBox="70 180 520 520"
       role="img"
       aria-labelledby="tibyan-logo-title tibyan-logo-description"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMid meet"
+      style={{ willChange: "transform", transform: "translateZ(0)" }}
     >
       <title id="tibyan-logo-title">شعار مشروع تبيان الطبي</title>
       <desc id="tibyan-logo-description">
@@ -655,7 +688,6 @@ export default function HomePage() {
   const { navigate } = useTibyanNavigation();
   const router = useRouter();
 
-  // تثبيت دالة التنقل مع startTransition لسلاسة أكبر
   const handleNavigate = useCallback(
     (href: string, title: string) => {
       startTransition(() => {
@@ -665,7 +697,6 @@ export default function HomePage() {
     [navigate]
   );
 
-  // دالة التحميل المسبق (prefetch) باستخدام router
   const prefetch = useCallback(
     (href: string) => {
       router.prefetch(href);
@@ -678,7 +709,6 @@ export default function HomePage() {
       dir="rtl"
       className={`${tibyanFont.variable} tibyan-page min-h-screen overflow-x-hidden bg-[#f7fcff] text-[#073b72]`}
     >
-      {/* خلفية هندسية طبية (محسّنة) */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
         <div className="medical-grid absolute inset-0 opacity-60" />
         <div className="absolute -right-28 top-28 h-80 w-80 rounded-full bg-[#12b7bd]/15 blur-3xl" />
@@ -694,8 +724,9 @@ export default function HomePage() {
         <PageFooter />
       </div>
 
-      {/* أنماط CSS المحسّنة مع تركيز على transform و will-change */}
       <style jsx global>{`
+        /* جميع الأنماط مع تحسينات الأداء */
+
         * {
           box-sizing: border-box;
         }
@@ -767,6 +798,8 @@ export default function HomePage() {
           box-shadow: 0 0 50px rgba(18, 183, 189, 0.08);
           will-change: transform;
           contain: layout style paint;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .engineering-ring.reverse {
@@ -778,6 +811,8 @@ export default function HomePage() {
           --orbit-radius: 142px;
           isolation: isolate;
           contain: layout style paint;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .logo-core {
@@ -785,11 +820,15 @@ export default function HomePage() {
           filter: drop-shadow(0 28px 32px rgba(3, 82, 143, 0.2));
           transform-origin: 50% 55%;
           will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .logo-aura {
           animation: logoAura 4.8s ease-in-out infinite;
           will-change: transform, opacity;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .orbit-energy-ring {
@@ -798,12 +837,16 @@ export default function HomePage() {
             inset 0 0 35px rgba(56, 201, 111, 0.04);
           animation: orbitEnergy 4s ease-in-out infinite;
           will-change: transform, opacity;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .orbit-runner {
           animation: orbitSpin 22s linear infinite;
           transform-origin: 50% 50%;
           will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .orbit-anchor {
@@ -813,6 +856,8 @@ export default function HomePage() {
         .orbit-counter {
           animation: orbitCounter 22s linear infinite;
           will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .orbit-badge {
@@ -824,6 +869,8 @@ export default function HomePage() {
             inset 0 1px 0 rgba(255, 255, 255, 0.9);
           animation: orbitBadgeBreath 3.8s ease-in-out infinite;
           will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .orbit-slot:nth-child(5) .orbit-badge {
@@ -850,11 +897,28 @@ export default function HomePage() {
           animation-play-state: paused;
         }
 
+        /* إيقاف الحركات عندما يكون الشعار خارج الشاشة */
+        .logo-paused .tibyan-heartbeat,
+        .logo-paused .tibyan-leaf,
+        .logo-paused .tibyan-head,
+        .logo-paused .tibyan-blue-arc,
+        .logo-paused .tibyan-leaf-vein,
+        .logo-paused .orbit-runner,
+        .logo-paused .orbit-counter,
+        .logo-paused .orbit-energy-ring,
+        .logo-paused .logo-core,
+        .logo-paused .logo-aura,
+        .logo-paused .engineering-ring {
+          animation-play-state: paused !important;
+        }
+
         .tibyan-heartbeat {
           stroke-dasharray: 260;
           stroke-dashoffset: 260;
           animation: heartbeatTrace 4.2s ease-in-out infinite;
           will-change: stroke-dashoffset, opacity;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .tibyan-leaf {
@@ -862,6 +926,8 @@ export default function HomePage() {
           transform-origin: 50% 80%;
           animation: leafBreath 4.6s ease-in-out infinite;
           will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .tibyan-head {
@@ -869,6 +935,8 @@ export default function HomePage() {
           transform-origin: center;
           animation: headBreath 4.5s ease-in-out infinite;
           will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .tibyan-blue-arc {
@@ -876,6 +944,8 @@ export default function HomePage() {
           transform-origin: 50% 85%;
           animation: blueArcBreath 4.8s ease-in-out infinite;
           will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .tibyan-leaf-vein {
@@ -883,6 +953,8 @@ export default function HomePage() {
           stroke-dashoffset: 0;
           animation: leafVeinFlow 4.6s ease-in-out infinite;
           will-change: stroke-dashoffset, opacity;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
         .service-card {
